@@ -25,8 +25,9 @@ return new class extends Migration
 
             $table->foreign('AVT_IMAGE_ID')->references('IMAGE_ID')->on('IMAGE');
             $table->foreign('ADDRESS_ID')->references('ADDRESS_ID')->on('ADDRESS'); 
+            $table->timestamp('email_verified_at')->nullable();
 
-            $table->timestamp('created_at');
+            $table->timestamp('created_at')->nullable();
         });
     }
 

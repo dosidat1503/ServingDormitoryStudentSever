@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('ORDER_DETAIL', function (Blueprint $table) {
             $table->bigIncrements("ORDER_DETAIL_ID");
             $table->unsignedBigInteger('ORDER_ID');
-            $table->unsignedInteger('FAD_ID');
+            $table->unsignedBigInteger('FAD_ID');
             $table->integer('QUANTITY');
             $table->integer('PRICE');
             $table->string('ID_PARENTFADOFTOPING'); 

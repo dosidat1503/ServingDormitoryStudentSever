@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::dropIfExists('FAD');
         Schema::create('FAD', function (Blueprint $table) {
-            $table->increments("FAD_ID")->primary();
+            $table->bigIncrements("FAD_ID");
             $table->string('FAD_NAME');
             $table->integer('FAD_PRICE');
             $table->string('IMAGE_ID');
