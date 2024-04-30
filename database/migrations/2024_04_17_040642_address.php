@@ -19,6 +19,10 @@ return new class extends Migration
             $table->string('DISTRICT');
             $table->string('PROVINCE');
             $table->boolean('IS_DELETED');
+
+            $table->unsignedBigInteger('USER_ID');
+
+            $table->foreign('USER_ID')->references('USER_ID')->on('USER');
         }); 
     }
 
