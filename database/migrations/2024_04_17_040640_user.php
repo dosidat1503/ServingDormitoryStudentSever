@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::dropIfExists('USER');
         Schema::create('USER', function (Blueprint $table) {
             $table->bigIncrements("USER_ID"); 
-            $table->string('EMAIL');
+            $table->string('EMAIL')->unique();
             $table->string('PASSWORD');
-            $table->string('PHONE');
+            $table->string('PHONE')->unique();
             $table->string('NAME');
             $table->date('BIRTHDAY');
             $table->boolean('GENDER');

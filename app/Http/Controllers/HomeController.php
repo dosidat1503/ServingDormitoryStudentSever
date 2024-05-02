@@ -75,7 +75,7 @@ class HomeController extends Controller
                 'URL' => 'http://localhost:8000/images/products/1/1_6_1702549349.png'
             ]);
             DB::table('user')->insert([
-                'EMAIL' => 'dosidat15031712@gmail.com',
+                'EMAIL' => '21521932@gm.uit.edu.vn',
                 'PASSWORD' => '$2y$10$muWNpPd9xBFoRCLnjfdBieUuPn5SLW5IsdslelTqlo/bo7.DyJLd.',
                 'PHONE' => '0968795749',
                 'NAME' => 'đỗ sĩ đạt',
@@ -93,17 +93,66 @@ class HomeController extends Controller
                 'IS_DELETED' => 0,
                 'USER_ID' => 1
             ]);
-            DB::table('shop')->insert([
-                'SHOP_NAME' => 'Example Shop',
-                'PHONE' => '0968795779',
-                'AVT_IMAGE_ID' => '1_6_1702549349',
-                'COVER_IMAGE_ID' => '1_6_1702549349',
-                'SHOP_OWNER_ID' => 1,
-                'ADDRESS_ID' => 1,
-                'DESCRIPTION' => 'Example Description',
-                'IS_DELETED' => 0,
-                'created_at' => \Carbon\Carbon::now()
-            ]);
+            //insert shop
+            {
+                for($i = 1; $i <= 3; $i++){
+                    DB::table('shop')->insert([
+                        'SHOP_NAME' => 'Cơm Ngô Quyền',
+                        'PHONE' => '0968795779',
+                        'AVT_IMAGE_ID' => '1_6_1702549349',
+                        'COVER_IMAGE_ID' => '1_6_1702549349',
+                        'SHOP_OWNER_ID' => 1,
+                        'ADDRESS_ID' => 1,
+                        'DESCRIPTION' => 'Example Description',
+                        'IS_DELETED' => 0,
+                        'created_at' => \Carbon\Carbon::now()
+                    ]);
+                    DB::table('shop')->insert([
+                        'SHOP_NAME' => 'Quán cơm 3 chị em',
+                        'PHONE' => '0968795779',
+                        'AVT_IMAGE_ID' => '1_6_1702549349',
+                        'COVER_IMAGE_ID' => '1_6_1702549349',
+                        'SHOP_OWNER_ID' => 1,
+                        'ADDRESS_ID' => 1,
+                        'DESCRIPTION' => 'Example Description',
+                        'IS_DELETED' => 0,
+                        'created_at' => \Carbon\Carbon::now()
+                    ]);
+                    DB::table('shop')->insert([
+                        'SHOP_NAME' => 'Trà sữa AZ',
+                        'PHONE' => '0968795779',
+                        'AVT_IMAGE_ID' => '1_6_1702549349',
+                        'COVER_IMAGE_ID' => '1_6_1702549349',
+                        'SHOP_OWNER_ID' => 1,
+                        'ADDRESS_ID' => 1,
+                        'DESCRIPTION' => 'Example Description',
+                        'IS_DELETED' => 0,
+                        'created_at' => \Carbon\Carbon::now()
+                    ]);
+                    DB::table('shop')->insert([
+                        'SHOP_NAME' => 'Bún đậu mắm tôm thị nỡ',
+                        'PHONE' => '0968795779',
+                        'AVT_IMAGE_ID' => '1_6_1702549349',
+                        'COVER_IMAGE_ID' => '1_6_1702549349',
+                        'SHOP_OWNER_ID' => 1,
+                        'ADDRESS_ID' => 1,
+                        'DESCRIPTION' => 'Example Description',
+                        'IS_DELETED' => 0,
+                        'created_at' => \Carbon\Carbon::now()
+                    ]);
+                    DB::table('shop')->insert([
+                        'SHOP_NAME' => 'Quán ăn BA5',
+                        'PHONE' => '0968795779',
+                        'AVT_IMAGE_ID' => '1_6_1702549349',
+                        'COVER_IMAGE_ID' => '1_6_1702549349',
+                        'SHOP_OWNER_ID' => 1,
+                        'ADDRESS_ID' => 1,
+                        'DESCRIPTION' => 'Example Description',
+                        'IS_DELETED' => 0,
+                        'created_at' => \Carbon\Carbon::now()
+                    ]);
+                }
+            }
             DB::table('fad')->insert([
                 'FAD_NAME' => 'Example Fad',
                 'FAD_PRICE' => 10.99,

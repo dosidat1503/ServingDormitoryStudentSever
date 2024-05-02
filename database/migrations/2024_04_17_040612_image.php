@@ -15,8 +15,7 @@ return new class extends Migration
         Schema::create('IMAGE', function (Blueprint $table) {
             $table->string('IMAGE_ID', 255)->primary();  
             $table->string('URL'); 
-            $table->BigInteger('USER_ID')->nullable();
- 
+            $table->BigInteger('USER_ID')->nullable(); 
         });
     }
 

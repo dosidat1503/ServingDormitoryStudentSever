@@ -7,6 +7,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderManagementOfUserController;
 use App\Http\Controllers\TestController;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\OrderFADHomeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,9 +39,11 @@ Route::post('addPost', [HomeController::class, 'addPost']);
 Route::get('getInfoPost', [HomeController::class, 'getInfoPost']);
 Route::get('searchPost', [HomeController::class, 'searchPost']);
 Route::get('setData', [HomeController::class, 'setData']);
-
-
+ 
 Route::get('getOrderInfoOfUser', [OrderManagementOfUserController::class, 'getOrderInfoOfUser']);
+
+Route::get('getFADShop', [OrderFADHomeController::class, 'getFADShop']);
+Route::get('getFADShopDetailInfo', [OrderFADHomeController::class, 'getFADShopDetailInfo']);
 // Route::get('/email/verify', function () {
 //     return view('auth.verify-email');
 // })->middleware('auth')->name('verification.notice');
