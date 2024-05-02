@@ -9,4 +9,8 @@ class Post extends Model
 {
     use HasFactory;
     protected $table = 'Post';
+    const CREATED_AT = 'create_at'; 
+    public $timestamps = false;
+    
+    protected $fillable = ['USER_ID', 'CONTENT', 'IMAGE_ID', 'TOPIC']; 
 }
