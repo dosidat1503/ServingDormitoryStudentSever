@@ -16,8 +16,8 @@ return new class extends Migration
             $table->bigIncrements("SHOP_ID");
             $table->string('SHOP_NAME');
             $table->string('PHONE');
-            $table->string('AVT_IMAGE_ID');
-            $table->string('COVER_IMAGE_ID');
+            $table->unsignedBigInteger('AVT_IMAGE_ID');
+            $table->unsignedBigInteger('COVER_IMAGE_ID');
             $table->unsignedBigInteger('SHOP_OWNER_ID');
             $table->integer('ADDRESS_ID');
             $table->longText('DESCRIPTION');

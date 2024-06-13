@@ -14,12 +14,14 @@ return new class extends Migration
         Schema::dropIfExists('ADDRESS');
         Schema::create('ADDRESS', function (Blueprint $table) {
             $table->bigIncrements("ADDRESS_ID");
+            $table->string('NAME')->nullable();
+            $table->string('PHONE')->nullable();
             $table->string('DETAIL');
-            $table->string('COMMUNE');
-            $table->string('DISTRICT');
-            $table->string('PROVINCE');
+            $table->string('COMMUNE')->nullable();
+            $table->string('DISTRICT')->nullable();
+            $table->string('PROVINCE')->nullable();
             $table->boolean('IS_DELETED');
-
+            $table->boolean('IS_DEFAULT')->nullable();
             $table->unsignedBigInteger('USER_ID');
 
             $table->foreign('USER_ID')->references('USER_ID')->on('USER');

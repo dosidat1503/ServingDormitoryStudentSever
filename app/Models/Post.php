@@ -12,5 +12,10 @@ class Post extends Model
     const CREATED_AT = 'create_at'; 
     public $timestamps = false;
     
-    protected $fillable = ['USER_ID', 'CONTENT', 'IMAGE_ID', 'TOPIC']; 
+    protected $fillable = ['USER_ID', 'CONTENT', 'TOPIC']; 
+
+    public function postImages()
+    {
+        return $this->hasMany(Post_Image::class, 'POST_ID');
+    }  
 }

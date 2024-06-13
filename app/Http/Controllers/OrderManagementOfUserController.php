@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Address;
 use Illuminate\Http\Request;
 use App\Models\Order;
+use App\Models\Voucher;
 
 class OrderManagementOfUserController extends Controller
 {
@@ -14,7 +16,6 @@ class OrderManagementOfUserController extends Controller
         $endIndex = $request->endIndex;
         $userID = $request->userID;
 
-
         $infoOrder = Order::where([
             ['USER_ID', '=', $userID],
             ['STATUS', '=', $orderStatusCode]
@@ -22,8 +23,8 @@ class OrderManagementOfUserController extends Controller
         ->with(['orderDetails.fad'])
         ->withCount('orderDetails')
         ->orderBy('DATE', 'desc')
-        ->skip($startIndex)
-        ->take($endIndex - $startIndex)
+        ->skip(0)
+        ->take(4)
         ->get()
         ->map(function ($order) {
             $firstOrderDetail = $order->orderDetails->first();
@@ -54,6 +55,26 @@ class OrderManagementOfUserController extends Controller
         return response()->json([
             'statusCode' => 200,
             'infoOrder' => $infoOrder,
+        ]);
+    }
+
+    public function getOrderDetailInfo(Request $request){ 
+        $orderInfo = Order::where('ORDER_ID', $request->orderID)->first();
+        $data = new \stdClass();
+        $data->orderInfo = $orderInfo; 
+
+        $deliveryInfo = Address::where('ADDRESS_ID', $orderInfo->ORDER_ADDRESS_ID)->select('ADDRESS_ID', 'DETAIL', 'PHONE', 'NAME')->get();
+
+        $orderDetailInfo = $orderInfo->with('orderDetails.fad')->where('ORDER_ID', $request->orderID)->get();
+
+        $voucherInfo = Voucher::where('VOUCHER_ID', $orderInfo->VOUCHER_ID)->select('VOUCHER_ID', 'VOUCHER_CODE', 'DISCOUNT');
+
+        return response()->json([
+            'statusCode' => 200,
+            'deliveryInfo' => $deliveryInfo,
+            'orderDetailInfo' => $orderDetailInfo,
+            'voucherInfo' => $voucherInfo,
+            // 'data' => $data,
         ]);
     }
 }

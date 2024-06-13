@@ -15,14 +15,12 @@ return new class extends Migration
         Schema::create('POST', function (Blueprint $table) {
             $table->bigIncrements('POST_ID');
             $table->unsignedBigInteger('USER_ID');
-            $table->text('CONTENT');
-            $table->string('IMAGE_ID');
-            $table->string('TOPIC');
+            $table->longText('CONTENT'); 
+            $table->integer('TOPIC');
             $table->bigInteger('LIKE_QUANTITY')->default(0);
             $table->boolean('IS_DELETED')->default(false);
             $table->timestamp('TIME');
-
-            $table->foreign('IMAGE_ID')->references('IMAGE_ID')->on('IMAGE');
+ 
             $table->foreign('USER_ID')->references('USER_ID')->on('USER'); 
         });
     }

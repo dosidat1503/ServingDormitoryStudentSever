@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::dropIfExists('IMAGE');
         Schema::create('IMAGE', function (Blueprint $table) {
-            $table->string('IMAGE_ID', 255)->primary();  
+            $table->bigIncrements('IMAGE_ID');  
             $table->string('URL'); 
             $table->BigInteger('USER_ID')->nullable(); 
         });

@@ -7,10 +7,25 @@ use Illuminate\Auth\Events\Verified;
 use App\Models\User;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use stdClass;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class AuthenticationController extends Controller
 {
     public function signup(Request $request) {
+        $Validator = Validator::make($request->all(), [ 
+            'email' => 'required|email:191|unique:user', 
+        ]);
+
+        if($Validator->fails()){
+            return response()->json([
+                'statusCode' =>  422,
+            ]);
+        } 
+        
         $user =  User::create([
             'name' => $request->fullname,
             'email' => $request->email, 
@@ -20,29 +35,61 @@ class AuthenticationController extends Controller
             'gender' => $request->gender,
         ]);
 
-        $user->sendEmailVerificationNotification();
+        $user->sendEmailVerificationNotification(); 
 
         return response()->json([
             'statusCode' =>  200,
         ]);
     }
-
-    public function signin(Request $request) {
+ 
+    public function signin(Request $request){   
         $email = $request->email;
         $password = $request->password;
-        $user = User::where("email", $email)->first();
- 
+        $taikhoan = User::where('email', $request->email)->first();
 
-        if($user && Hash::check($password, $user->PASSWORD)){
-            $token = $user->createToken($user->email."_Token")->plainTextToken;
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email:191',
+            'password' => 'required',
+        ]);
+        
+        if($validator->fails())
+        {
             return response()->json([
-                'statusCode' => 200,
-                'token' => $token,
-                'userID' => $user->USER_ID,
+                'statusCode' => 1,// không đúng định dạng
+                'message' => "Mật khẩu hoặc email không đúng", 
             ]);
         }
-        
-        return response()->json(['error' => 'Unauthorized'], 401);
+        else
+        {
+            if(!$taikhoan) {  
+                return response()->json([
+                    'statusCode' => 1,
+                    'message' => "Email không tồn tại",
+                ]);  
+            }
+            else if($taikhoan && !Hash::check($request->password,$taikhoan->PASSWORD)){ 
+                return response()->json([
+                    'statusCode'=>3,
+                    'message' => "Mật khẩu sai",
+                ]);
+            }
+            else { 
+                if (is_null($taikhoan->email_verified_at)) {  
+                    return response()->json([
+                        'statusCode'=>4,
+                        'message' => "Tài khoản chưa được xác nhận",
+                    ]);
+                }   
+                $token = $taikhoan->createToken($taikhoan->email.'_Token')->plainTextToken;
+                    
+                return response()->json([
+                    'statusCode' => 200,
+                    'token' => $token,
+                    'userID' => $taikhoan->USER_ID,
+                ]);
+                // }
+            } 
+        } 
     }
 
     public function verify(Request $request) {
@@ -68,5 +115,36 @@ class AuthenticationController extends Controller
         }
 
         return response()->json(['message' => 'Email verified'], 200);
+    }
+
+    public function sendMailRecoverPassword(Request $request) {
+        $email = $request->email;
+        $taikhoan = User::where('email', $request->email)->first();
+        if (!$taikhoan) { 
+            $data = new stdClass();
+            $data->email = "Email không tồn tại"; 
+            return response()->json([
+                'statusCode'=> 1,
+                'message' => "Email không tồn tại",
+            ]);  
+        }
+        
+        $password = Str::random(10);
+        $password_hash = Hash::make($password);
+        DB::update("UPDATE user SET PASSWORD = '$password_hash' Where EMAIL = '$email'");
+        Mail::send('mailRecoverPassword', ['password' => $password], function($message) use ($email){
+            $message->to($email);
+        });
+        return response()->json([
+            'statusCode'=>200,  
+        ]);  
+    }
+
+    public function logout() { 
+        Auth::user()->tokens()->delete();
+        return response()->json([
+            'statusCode'=>200,
+            'message'=>'Logged out Successfully',
+        ]);
     }
 }

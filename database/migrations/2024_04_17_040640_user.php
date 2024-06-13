@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('NAME');
             $table->date('BIRTHDAY');
             $table->boolean('GENDER');
-            $table->string('AVT_IMAGE_ID', 255)->nullable();  
+            $table->unsignedBigInteger('AVT_IMAGE_ID')->nullable();  
 
             $table->foreign('AVT_IMAGE_ID')->references('IMAGE_ID')->on('IMAGE'); 
             $table->timestamp('email_verified_at')->nullable();

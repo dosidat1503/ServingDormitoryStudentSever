@@ -13,18 +13,16 @@ return new class extends Migration
     {
         Schema::dropIfExists('ORDER');
         Schema::create('ORDER', function (Blueprint $table) {
-            $table->bigIncrements("ORDER_ID");
-            $table->unsignedBigInteger('SHOP_ID');
+            $table->bigIncrements("ORDER_ID"); 
             $table->unsignedBigInteger('USER_ID');
             $table->unsignedBigInteger('ORDER_ADDRESS_ID');
-            $table->integer('VOUCHER_ID');
+            $table->integer('VOUCHER_ID')->nullable();
             $table->string('PAYMENT_METHOD');
             $table->integer('STATUS');
             $table->bigInteger('TOTAL_PAYMENT');
             $table->timestamp('DATE');
 
-            $table->foreign('USER_ID')->references('USER_ID')->on('USER');
-            $table->foreign('SHOP_ID')->references('SHOP_ID')->on('SHOP');
+            $table->foreign('USER_ID')->references('USER_ID')->on('USER'); 
             $table->foreign('ORDER_ADDRESS_ID')->references('ADDRESS_ID')->on('ADDRESS');
         });
     }

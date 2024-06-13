@@ -16,7 +16,7 @@ return new class extends Migration
             $table->bigIncrements("FAD_ID");
             $table->string('FAD_NAME');
             $table->integer('FAD_PRICE');
-            $table->string('IMAGE_ID');
+            $table->unsignedBigInteger('IMAGE_ID');
             $table->unsignedBigInteger('SHOP_ID');
             $table->integer('ID_PARENTFADOFTOPPING')->nullable();
             $table->longText('DESCRIPTION');  

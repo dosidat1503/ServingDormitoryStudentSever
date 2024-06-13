@@ -10,6 +10,8 @@ class Image extends Model
     use HasFactory; 
     protected $table = 'Image';
     protected $primaryKey = 'IMAGE_ID';
+    protected $fillable = ['IMAGE_ID', 'URL', 'USER_ID']; 
+    public $timestamps = false;
 
     public function shopAVT()
     {
