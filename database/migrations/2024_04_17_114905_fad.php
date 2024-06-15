@@ -14,16 +14,16 @@ return new class extends Migration
         Schema::dropIfExists('FAD');
         Schema::create('FAD', function (Blueprint $table) {
             $table->bigIncrements("FAD_ID");
+            $table->string('FAD_TYPE');
             $table->string('FAD_NAME');
             $table->integer('FAD_PRICE');
             $table->string('IMAGE_ID');
             $table->unsignedBigInteger('SHOP_ID');
             $table->integer('ID_PARENTFADOFTOPPING')->nullable();
-            $table->longText('DESCRIPTION');  
+            $table->longText('DESCRIPTION');
             $table->boolean('IS_DELETED');
-
             $table->foreign('IMAGE_ID')->references('IMAGE_ID')->on('IMAGE');
-            $table->foreign('SHOP_ID')->references('SHOP_ID')->on('SHOP'); 
+            $table->foreign('SHOP_ID')->references('SHOP_ID')->on('SHOP');
         });
     }
 
@@ -33,5 +33,5 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('FAD');
-    } 
+    }
 };
