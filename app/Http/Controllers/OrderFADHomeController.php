@@ -130,4 +130,31 @@ class OrderFADHomeController extends Controller
             'topping' => $topping,
         ]);
     }
+
+    public function searchFAD(Request $request){
+        $textToSearchFAD = $request->textToSearchFAD;
+        $range = $request->range;//range là array
+        $FADtype = $request->FADtype;
+        $deliveryType = $request->deliveryType;//điều kiện này sẽ xem xét dùng sau
+        $sortType = $request->sortType;
+
+        $FADInfo_eloquent = FAD::select('FAD_ID', 'FAD_NAME', 'FAD_PRICE')
+                ->leftJoin('IMAGE', 'FAD.IMAGE_ID', '=', 'IMAGE.IMAGE_ID')
+                ->leftJoin('SHOP', 'FAD.SHOP_ID', '=', 'SHOP.SHOP_ID')
+                ->leftJoin('IMAGE AS SHOP_IMAGE', 'SHOP.AVT_IMAGE_ID', '=', 'SHOP_IMAGE.IMAGE_ID')
+                ->addSelect('IMAGE.URL AS FOOD_IMAGE_URL', 'SHOP.SHOP_NAME', 'SHOP_IMAGE.URL AS SHOP_IMAGE_URL')
+                ->get();
+        if ($textToSearchFAD != "") {
+            $FADInfo_eloquent = $FADInfo_eloquent->where('FAD_NAME', 'like', '%' . $textToSearchFAD . '%');
+        }
+
+        if (!empty($range) && is_array($range)) {
+            $FADInfo_eloquent = $FADInfo_eloquent->whereBetween('FAD_PRICE', [$range[0], $range[1]]);
+        }
+
+        return response()->json([
+            'statusCode' => 200, 
+            'FADInfo_eloquent' => $FADInfo_eloquent, 
+        ]);
+    }
 }

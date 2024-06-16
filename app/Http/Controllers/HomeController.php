@@ -54,7 +54,56 @@ class HomeController extends Controller
     }
 
     public function getInfoPost(Request $request){ 
-        $infoPost = Post::orderBy("TIME", 'desc')->take(20)->get();
+        $textQueryPost = $request->input('textQueryPost', '');
+        $topics = $request->input('topic', []); // Lấy các giá trị của topic, mặc định là một mảng rỗng
+        $startDate = $request->input('startDate', null);
+        $endDate = $request->input('endDate', null);
+        $sortBy = $request->input('sortBy', 1);
+        $itemQuantityEveryLoad = $request->input('itemQuantityEveryLoad');
+        $startIndex = $request->input('startIndex');
+
+        $infoPost = [];
+        // if ($textQueryPost === "") {
+        //     $infoPost = Post::orderBy("TIME", 'desc')->take(20)->get();
+        // } else {
+        //     $infoPost = Post::where("CONTENT", "LIKE", "%$textQueryPost%")->orderBy("TIME", 'desc')->take(20)->get();
+        // } 
+
+        $infoPostQuery = Post::query();
+
+        if (!empty($textQueryPost)) {
+            $infoPostQuery->where('CONTENT', 'LIKE', '%' . $textQueryPost . '%');
+        }
+        
+        if (!empty($topics)) {
+            $infoPostQuery->whereIn('TOPIC', $topics);
+        }
+ 
+        if (!is_null($startDate) && $endDate == "") {
+            $infoPostQuery->where('TIME', '=', $startDate);
+        }
+        else{
+            // Thêm điều kiện cho ngày tháng nếu tồn tại
+            if (!is_null($startDate)) {
+                $infoPostQuery->where('TIME', '>=', $startDate);
+            }
+    
+            if (!is_null($endDate)) {
+                $infoPostQuery->where('TIME', '<=', $endDate);
+            }
+        }
+
+
+        if ($sortBy == 2) {
+            $infoPostQuery->orderBy('LIKE_QUANTITY', 'desc');
+        } else {
+            $infoPostQuery->orderBy('TIME', 'desc');
+        }
+
+        // Thực hiện truy vấn với sắp xếp và giới hạn số lượng kết quả
+        $infoPost = $infoPostQuery->skip($startIndex)->take($itemQuantityEveryLoad)->get(); 
+
+        // $infoPost = Post::orderBy("TIME", 'desc')->take(20)->get();
         // $infoUser = User::all();
         $userID = $infoPost->pluck('USER_ID');
         $infoUser = User::whereIn('USER_ID', $userID)->select("NAME", "AVT_IMAGE_ID", "USER_ID")->get();
@@ -80,21 +129,30 @@ class HomeController extends Controller
     }
 
     public function searchPost(Request $request) {
-        $textQueryPost = $request->textQueryPost; 
-
-        $infoPost = Post::where("CONTENT", "LIKE", "%$textQueryPost%")->orderBy("TIME", 'desc')->get();
-         
+        $textQueryPost = $request->textQueryPost;  
+        $infoPost = Post::where("CONTENT", "LIKE", "%$textQueryPost%")->orderBy("TIME", 'desc')->take(20)->get();
+        // $infoUser = User::all();
         $userID = $infoPost->pluck('USER_ID');
         $infoUser = User::whereIn('USER_ID', $userID)->select("NAME", "AVT_IMAGE_ID", "USER_ID")->get();
         $AvatarImageID = $infoUser->pluck('AVT_IMAGE_ID');
         $infoAvatarImage = Image::whereIn('IMAGE_ID', $AvatarImageID)->get();
-
+        // $infoPostImage = Post_Image::whereIn('POST_ID', $infoPost->pluck('POST_ID'))->get();
+        $infoPostImage = Post_Image::whereIn('POST_ID', $infoPost->pluck('POST_ID'))
+        ->with('image')
+        ->get()
+        ->map(function ($postImage) {
+            return [
+                'POST_ID' => $postImage->POST_ID, 
+                'URL' => $postImage->image->URL,
+            ];
+        });
         return response()->json([
-            'statusCode' => 200,
-            'infoPost' => $infoPost,
-            'infoUser' => $infoUser,
-            'infoAvatarImage' => $infoAvatarImage,
-        ], 200);
+            "statusCode" => 200,
+            "infoPost" => $infoPost,
+            "infoUser" => $infoUser,
+            "infoAvatarImage" => $infoAvatarImage,
+            'infoPostImage' => $infoPostImage
+        ]);
     }
 
     public function setData(Request $request) {

@@ -13,7 +13,7 @@ class OrderManagementOfUserController extends Controller
     public function getOrderInfoOfUser(Request $request){
         $orderStatusCode = $request->orderStatusCode;
         $startIndex = $request->startIndex;
-        $endIndex = $request->endIndex;
+        $itemQuantityEveryLoad = $request->itemQuantityEveryLoad;
         $userID = $request->userID;
 
         $infoOrder = Order::where([
@@ -23,8 +23,8 @@ class OrderManagementOfUserController extends Controller
         ->with(['orderDetails.fad'])
         ->withCount('orderDetails')
         ->orderBy('DATE', 'desc')
-        ->skip(0)
-        ->take(4)
+        ->skip($startIndex)
+        ->take($itemQuantityEveryLoad)
         ->get()
         ->map(function ($order) {
             $firstOrderDetail = $order->orderDetails->first();

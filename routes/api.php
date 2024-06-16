@@ -48,6 +48,7 @@ Route::get('getFADShop', [OrderFADHomeController::class, 'getFADShop']);
 Route::get('getFADShopDetailInfo', [OrderFADHomeController::class, 'getFADShopDetailInfo']);
 Route::get('getFADInfoAtHome', [OrderFADHomeController::class, 'getFADInfoAtHome']);
 Route::get('getFADDetailInfo', [OrderFADHomeController::class, 'getFADDetailInfo']);
+Route::get('searchFAD', [OrderFADHomeController::class, 'searchFAD']);
 
 Route::post('sendMailRecoverPassword', [AuthenticationController::class, 'sendMailRecoverPassword']);
 
