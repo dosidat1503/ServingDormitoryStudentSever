@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -14,10 +15,11 @@ use App\Models\Post;
 use App\Models\Post_Image;
 
 class HomeController extends Controller
-{ 
-    
+{
 
-    public function addPost(Request $request) {
+
+    public function addPost(Request $request)
+    {
         $topic = $request->topic;
         $content = $request->content;
         $imageList = $request->imageList;
@@ -155,7 +157,8 @@ class HomeController extends Controller
         ]);
     }
 
-    public function setData(Request $request) {
+    public function setData(Request $request)
+    {
         //insert dữ liệu để test load dữ liệu ở quản lý đơn hàng
         {
             //insert image
@@ -293,7 +296,7 @@ class HomeController extends Controller
             }
             //insert shop
             {
-                for($i = 1; $i <= 3; $i++){
+                for ($i = 1; $i <= 3; $i++) {
                     DB::table('shop')->insert([
                         'SHOP_NAME' => 'Cơm Ngô Quyền',
                         'PHONE' => '0968795779',
@@ -476,23 +479,22 @@ class HomeController extends Controller
                 for($j = 1; $j <= 20; $j++) {
                     DB::table('order')->insert([ 
                         'USER_ID' => 1,
-                        'ORDER_ADDRESS_ID' => 1, 
+                        'ORDER_ADDRESS_ID' => 1,
                         'PAYMENT_METHOD' => "Tiền mặt",
                         'VOUCHER_ID' => 1,
                         'STATUS' => $i,
                         'TOTAL_PAYMENT' => 21.98,
                         'DATE' => \Carbon\Carbon::now()
-                    ]); 
+                    ]);
                     DB::table('order_detail')->insert([
-                        'ORDER_ID' => $j + ( $i - 1 ) * 20 ,
+                        'ORDER_ID' => $j + ($i - 1) * 20,
                         'FAD_ID' => 1,
                         'QUANTITY' => 2,
-                        'PRICE' => 10.99, 
+                        'PRICE' => 10.99,
                     ]);
-                } 
+                }
             }
 
         } 
     }
-
 }
