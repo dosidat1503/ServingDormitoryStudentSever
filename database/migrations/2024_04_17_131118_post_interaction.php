@@ -16,7 +16,8 @@ return new class extends Migration
             $table->bigIncrements('POST_INTERACTION_ID');
             $table->unsignedBigInteger('POST_ID');
             $table->unsignedBigInteger('USER_ID');
-            $table->boolean('IS_LIKED')->default(false); 
+            $table->integer('IS_LIKE')->nullable(); 
+            $table->integer('IS_SAVE')->nullable();  
 
             $table->foreign('POST_ID')->references('POST_ID')->on('POST'); 
             $table->foreign('USER_ID')->references('USER_ID')->on('USER'); 

@@ -15,15 +15,19 @@ return new class extends Migration
         Schema::create('ORDER', function (Blueprint $table) {
             $table->bigIncrements("ORDER_ID"); 
             $table->unsignedBigInteger('USER_ID');
-            $table->unsignedBigInteger('ORDER_ADDRESS_ID');
-            $table->integer('VOUCHER_ID')->nullable();
+            $table->unsignedBigInteger('ADDRESS_ID'); 
             $table->string('PAYMENT_METHOD');
             $table->integer('STATUS');
+            $table->integer('PAYMENT_STATUS');
             $table->bigInteger('TOTAL_PAYMENT');
+            $table->string('VOUCHER_CODE', 191)->nullable();
+            $table->integer('DISCOUNT_VALUE')->nullable();
+            $table->string('NOTE')->nullable();
             $table->timestamp('DATE');
 
             $table->foreign('USER_ID')->references('USER_ID')->on('USER'); 
-            $table->foreign('ORDER_ADDRESS_ID')->references('ADDRESS_ID')->on('ADDRESS');
+            $table->foreign('ADDRESS_ID')->references('ADDRESS_ID')->on('ADDRESS');
+            $table->foreign('VOUCHER_CODE')->references('VOUCHER_CODE')->on('VOUCHER');
         });
     }
 
