@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccountManagementController;
 use App\Http\Controllers\AdminFADController;
 use App\Http\Controllers\AuthenticationController;
 use Illuminate\Http\Request;
@@ -44,18 +45,19 @@ Route::post('addPost', [HomeController::class, 'addPost']);
 Route::get('getInfoPost', [HomeController::class, 'getInfoPost']);
 Route::get('searchPost', [HomeController::class, 'searchPost']);
 Route::get('setData', [HomeController::class, 'setData']);
-
+Route::post('interactPost', [HomeController::class, 'interactPost']);
 
 // Orders api
 Route::get('getOrderInfoOfUser', [OrderManagementOfUserController::class, 'getOrderInfoOfUser']);
 Route::get('getOrderDetailInfo', [OrderManagementOfUserController::class, 'getOrderDetailInfo']);
+Route::post('changeOrderStatusToCancel', [OrderManagementOfUserController::class, 'changeOrderStatusToCancel']);
 
 // Shop api
 Route::get('getFADShop', [OrderFADHomeController::class, 'getFADShop']);
 Route::get('getFADShopDetailInfo', [OrderFADHomeController::class, 'getFADShopDetailInfo']);
-Route::get('getFADInfoAtHome', [OrderFADHomeController::class, 'getFADInfoAtHome']);
+Route::get('getFADInfo', [OrderFADHomeController::class, 'getFADInfo']);
 Route::get('getFADDetailInfo', [OrderFADHomeController::class, 'getFADDetailInfo']);
-Route::get('searchFAD', [OrderFADHomeController::class, 'searchFAD']);
+Route::get('userSearchFAD', [OrderFADHomeController::class, 'userSearchFAD']);
 
 Route::post('sendMailRecoverPassword', [AuthenticationController::class, 'sendMailRecoverPassword']);
 
@@ -63,8 +65,15 @@ Route::get('getDefaultDeliveryInfo', [OrderAndPaymentController::class, 'getDefa
 Route::get('getDeliveryInfo', [OrderAndPaymentController::class, 'getDeliveryInfo']);
 
 Route::post('saveOrder', [OrderAndPaymentController::class, 'saveOrder']);
+Route::post('updateDeliveryInfo', [OrderAndPaymentController::class, 'updateDeliveryInfo']);
 
+//acount
+Route::get('getInfoAccount', [AccountManagementController::class, 'getInfoAccount']);
+Route::post('updateAccountInfo', [AccountManagementController::class, 'updateAccountInfo']);
+Route::post('verifyChangeMail', [AccountManagementController::class, 'verifyChangeMail']);
+Route::post('changePassword', [AccountManagementController::class, 'changePassword']);
 
+ 
 // admin api
 // admin fad
 Route::post('addFAD', [AdminFADController::class, 'addFAD']);
