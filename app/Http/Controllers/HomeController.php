@@ -558,7 +558,7 @@ class HomeController extends Controller
                     'FAD_NAME' => 'Phở bò tái',
                     'FAD_PRICE' => 30000,
                     'IMAGE_ID' => 12,
-                    'SHOP_ID' => 1, 
+                    'SHOP_ID' => 5, 
                     'DESCRIPTION' => 'Phở bò tái gia truyền, bò nhiều, nước dùng ngon',
                     'IS_DELETED' => 0,
                     'CATEGORY' => 1,
@@ -569,7 +569,7 @@ class HomeController extends Controller
                     'FAD_NAME' => 'Trà chanh bí đao',
                     'FAD_PRICE' => 13000,
                     'IMAGE_ID' => 13,
-                    'SHOP_ID' => 1, 
+                    'SHOP_ID' => 3, 
                     'DESCRIPTION' => 'Trà chanh',
                     'IS_DELETED' => 0,
                     'CATEGORY' => 2,
@@ -581,7 +581,7 @@ class HomeController extends Controller
                     'FAD_NAME' => 'Trà sữa thái xanh',
                     'FAD_PRICE' => 22000,
                     'IMAGE_ID' => 14,
-                    'SHOP_ID' => 1, 
+                    'SHOP_ID' => 3, 
                     'DESCRIPTION' => 'Trà sữa thái xanh',
                     'IS_DELETED' => 0,
                     'CATEGORY' => 2,
@@ -593,7 +593,7 @@ class HomeController extends Controller
                     'FAD_NAME' => 'M',
                     'FAD_PRICE' => 0,
                     'IMAGE_ID' => 14,
-                    'SHOP_ID' => 1, 
+                    'SHOP_ID' => 3, 
                     'DESCRIPTION' => 'Trà sữa thái xanh',
                     'ID_PARENTFADOFSIZE' => 6,
                     'IS_DELETED' => 0, 
@@ -603,7 +603,7 @@ class HomeController extends Controller
                     'FAD_NAME' => 'L',
                     'FAD_PRICE' => 4000,
                     'IMAGE_ID' => 14,
-                    'SHOP_ID' => 1, 
+                    'SHOP_ID' => 3, 
                     'DESCRIPTION' => 'Trà sữa thái xanh',
                     'ID_PARENTFADOFSIZE' => 6,
                     'IS_DELETED' => 0, 
@@ -614,7 +614,7 @@ class HomeController extends Controller
                     'FAD_NAME' => 'Trân châu đen',
                     'FAD_PRICE' => 5000,
                     'IMAGE_ID' => 14,
-                    'SHOP_ID' => 1, 
+                    'SHOP_ID' => 3, 
                     'DESCRIPTION' => 'Trà sữa thái xanh',
                     'ID_PARENTFADOFTOPPING' => 6,
                     'IS_DELETED' => 0, 
@@ -624,7 +624,7 @@ class HomeController extends Controller
                     'FAD_NAME' => 'Viên phô mai',
                     'FAD_PRICE' => 5000,
                     'IMAGE_ID' => 14,
-                    'SHOP_ID' => 1, 
+                    'SHOP_ID' => 3, 
                     'DESCRIPTION' => 'Trà sữa thái xanh',
                     'ID_PARENTFADOFTOPPING' => 6,
                     'IS_DELETED' => 0, 
@@ -634,7 +634,7 @@ class HomeController extends Controller
                     'FAD_NAME' => 'Bún thịt nướng',
                     'FAD_PRICE' => 25000,
                     'IMAGE_ID' => 15,
-                    'SHOP_ID' => 1, 
+                    'SHOP_ID' => 5, 
                     'DESCRIPTION' => 'Bún thịt nướng',
                     'IS_DELETED' => 0,
                     'CATEGORY' => 1,
@@ -794,6 +794,17 @@ class HomeController extends Controller
                 }
     
             }
+            DB::table("VOUCHER")
+            ->insert([
+                'VOUCHER_CODE' => 'VC_CTNQ_T1',
+                'DISCOUNT_VALUE' => 10000, 
+                'MAX_QUANTITY' => 100,
+                'VOUCHER_CODE' => "CT_NGQ_T1",
+                'SHOP_ID' => 1, 
+                'START_DATE' => '2024-05-01',
+                'EXPIRATION_DATE' => '2024-05-31',
+                'REMAIN_AMOUNT' => 50
+            ]);
 
             //insert order 
             for($i = 1; $i <= 5; $i++) { 
@@ -802,7 +813,7 @@ class HomeController extends Controller
                         'USER_ID' => 1,
                         'ADDRESS_ID' => 1,
                         'PAYMENT_METHOD' => "Tiền mặt",
-                        'VOUCHER_ID' => 1,
+                        'VOUCHER_CODE' => "CT_NGQ_T1",
                         'STATUS' => $i,
                         'PAYMENT_STATUS' => $i,
                         'TOTAL_PAYMENT' => 21.98,
@@ -844,6 +855,7 @@ class HomeController extends Controller
             //     'USER_ID' => 1,
             //     'IS_SAVE' => 1, 
             // ]);
+
  
         } 
     }

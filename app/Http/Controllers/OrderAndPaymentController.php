@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Address;
 use App\Models\Order;
 use App\Models\Order_detail; 
+use App\Models\Voucher; 
+use Illuminate\Support\Facades\DB;
 
 class OrderAndPaymentController extends Controller
 {
@@ -38,26 +40,96 @@ class OrderAndPaymentController extends Controller
         ]);
     }
 
+    public function applyVoucher(Request $request){
+        $voucher = $request->voucher; 
+        $shopID = $request->shopID; 
+        $totalMoneyForPayment = $request->totalMoneyForPayment; 
+        $voucher = DB::table('voucher')
+                    ->where('VOUCHER_CODE', $voucher)
+                    ->where('SHOP_ID', $shopID)
+                    ->first();
+        // if($voucher == null){
+        //     return response()->json([
+        //         'statusCode' => 404,
+        //         'message' => 'Mã voucher sai hoặc không phải của shop đang đặt hàng',
+        //     ]);
+        // }
+        // if($totalMoneyForPayment < $voucher->MIN_ORDER_TOTAL){
+        //     return response()->json([
+        //         'statusCode' => 404,
+        //         'message' => 'Số tiền đơn hàng không đạt mức tối thiểu để sử dụng Voucher này',
+        //     ]);
+        // }
+        // if($voucher->EXPIRATION_DATE < now()){
+        //     return response()->json([
+        //         'statusCode' => 404,
+        //         'message' => 'Mã voucher này đã hết hạn sử dụng',
+        //     ]);
+        // }
+        // if($voucher->START_DATE > now()){
+        //     return response()->json([
+        //         'statusCode' => 404,
+        //         'message' => 'Mã voucher này chưa đến ngày có thể áp dụng được',
+        //     ]);
+        // }
+        // $discountValue = 0;
+        // if($voucher->DISCOUNT_VALUE <= 1){
+        //     $discountValue = $totalMoneyForPayment * $voucher->DISCOUNT_VALUE;
+        // }
+        // else{
+        //     $discountValue = $voucher->DISCOUNT_VALUE;
+        // }
+
+        return response()->json([
+            'statusCode' => 200,
+            // 'DISCOUNT_VALUE' => $discountValue,
+            'voucher' => $voucher,
+        ]);
+    }
+
     public function saveOrder(Request $request){
         $ADDRESS_ID = $request->deliveryInfo["id"];
         $paymentMethod = $request->paymentMethod;
-        $voucherID = $request->voucherID;
-        $paymentAmount = $request->paymentAmount;
+        $voucherCODE = $request->voucherCODE;
+        $discountValue = $request->discountValue;
+        $paymentTotal = $request->paymentTotal;
+        $note = $request->note;
         $userID = $request->userID;
         $data = new \stdClass();
         $data->userID = $userID; 
         $productList = $request->productList;
         // lưu thông tin đơn hàng xuống trước
-        Order::create([
+
+        $orderData = [
             'USER_ID' => $userID,
             'ADDRESS_ID' => $ADDRESS_ID,
-            'VOUCHER_ID' => $voucherID,
             'PAYMENT_METHOD' => $paymentMethod,
             'PAYMENT_STATUS' => 0,
             'STATUS' => 1,
-            'TOTAL_PAYMENT' => $paymentAmount, 
+            'TOTAL_PAYMENT' => $paymentTotal, 
+            'NOTE' => $note,
             'DATE' => now(),
-        ]);
+        ];
+
+        if ($voucherCODE != "" && $discountValue > 0) {
+            $orderData['VOUCHER_CODE'] = $voucherCODE;
+            $orderData['DISCOUNT_VALUE'] = $discountValue;
+        }
+
+        Order::create($orderData);
+
+        // Order::create([
+        //     'USER_ID' => $userID,
+        //     'ADDRESS_ID' => $ADDRESS_ID,
+        //     'VOUCHER_CODE' => $voucherCODE,
+        //     'DISCOUNT_VALUE' => $discountValue,
+        //     'PAYMENT_METHOD' => $paymentMethod,
+        //     'PAYMENT_STATUS' => 0,
+        //     'STATUS' => 1,
+        //     'TOTAL_PAYMENT' => $paymentTotal, 
+        //     'NOTE' => $note,
+        //     'DATE' => now(),
+        // ]);
         //lấy lên lại
         $orderHasSaved =  Order::where('USER_ID', $userID)
                                 ->orderBy('DATE', 'desc')
@@ -67,7 +139,7 @@ class OrderAndPaymentController extends Controller
             $size = "";
             foreach($item['sizes'] as $sizeItem)
                 $sizeItem['checked'] ? $size = $sizeItem['label'] : "";    
-
+        }
             Order_detail::create([ 
                 'ORDER_ID' => $orderHasSaved->ORDER_ID,
                 'FAD_ID' => $item['id'],
@@ -90,7 +162,7 @@ class OrderAndPaymentController extends Controller
                     ]);
                 } 
             }
-        } 
+        
         
         if($paymentMethod == "Chuyển khoản"){
             $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
@@ -101,7 +173,7 @@ class OrderAndPaymentController extends Controller
             $vnp_TxnRef = 100; //Mã đơn hàng. Trong thực tế Merchant cần insert đơn hàng vào DB và gửi mã này sang VNPAY
             $vnp_OrderInfo = 'Thanh toán hoá đơn';
             $vnp_OrderType = 'Hoá đơn thời trang';
-            $vnp_Amount = $paymentAmount * 100;
+            $vnp_Amount = $paymentTotal * 100;
             $vnp_Locale = 'vn';
             $vnp_BankCode = '' ;
             $vnp_IpAddr = $_SERVER['REMOTE_ADDR'];
