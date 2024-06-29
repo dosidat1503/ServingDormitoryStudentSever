@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
+// bang bui & le xuan
+
 class UserController extends Controller
 {
     public function getUserDetails(Request $request, $id)
