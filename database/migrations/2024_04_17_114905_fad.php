@@ -19,11 +19,15 @@ return new class extends Migration
             $table->unsignedBigInteger('IMAGE_ID');
             $table->unsignedBigInteger('SHOP_ID');
             $table->integer('ID_PARENTFADOFTOPPING')->nullable();
-            $table->longText('DESCRIPTION');  
+            $table->integer('ID_PARENTFADOFSIZE')->nullable();
+            $table->longText('DESCRIPTION')->nullable();
             $table->boolean('IS_DELETED');
+            $table->integer('CATEGORY')->nullable();
+            $table->integer('TAG')->nullable();
+            $table->timestamp('DATE');
 
             $table->foreign('IMAGE_ID')->references('IMAGE_ID')->on('IMAGE');
-            $table->foreign('SHOP_ID')->references('SHOP_ID')->on('SHOP'); 
+            $table->foreign('SHOP_ID')->references('SHOP_ID')->on('SHOP');
         });
     }
 
@@ -33,5 +37,5 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('FAD');
-    } 
+    }
 };

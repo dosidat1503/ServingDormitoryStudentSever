@@ -20,9 +20,9 @@ return new class extends Migration
             $table->integer('MIN_ORDER_TOTAL');
             $table->date('START_DATE');
             $table->date('EXPIRATION_DATE');
-            $table->integer('MAX_QUANTITY'); 
-
-            $table->foreign('SHOP_ID')->references('SHOP_ID')->on('SHOP'); 
+            $table->integer('MAX_QUANTITY');
+            $table->boolean('IS_DELETED');
+            $table->foreign('SHOP_ID')->references('SHOP_ID')->on('SHOP');
         });
     }
 
