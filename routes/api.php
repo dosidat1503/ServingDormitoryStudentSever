@@ -50,11 +50,15 @@ Route::post('interactPost', [HomeController::class, 'interactPost']);
 // Orders api
 Route::get('getOrderInfoOfUser', [OrderManagementOfUserController::class, 'getOrderInfoOfUser']);
 Route::get('getOrderDetailInfo', [OrderManagementOfUserController::class, 'getOrderDetailInfo']);
+Route::get('getInfoProductToRate', [OrderManagementOfUserController::class, 'getInfoProductToRate']);
+Route::post('saveRate', [OrderManagementOfUserController::class, 'saveRate']);
 Route::post('changeOrderStatusToCancel', [OrderManagementOfUserController::class, 'changeOrderStatusToCancel']);
+
 
 // Shop api
 Route::get('getFADShop', [OrderFADHomeController::class, 'getFADShop']);
 Route::get('getFADShopDetailInfo', [OrderFADHomeController::class, 'getFADShopDetailInfo']);
+Route::get('getVoucherInfo', [OrderFADHomeController::class, 'getVoucherInfo']);
 Route::get('getFADInfo', [OrderFADHomeController::class, 'getFADInfo']);
 Route::get('getFADDetailInfo', [OrderFADHomeController::class, 'getFADDetailInfo']);
 Route::get('userSearchFAD', [OrderFADHomeController::class, 'userSearchFAD']);
@@ -65,6 +69,7 @@ Route::get('getDefaultDeliveryInfo', [OrderAndPaymentController::class, 'getDefa
 Route::get('getDeliveryInfo', [OrderAndPaymentController::class, 'getDeliveryInfo']);
 
 Route::post('saveOrder', [OrderAndPaymentController::class, 'saveOrder']);
+Route::get('paymentOnline', [OrderAndPaymentController::class, 'paymentOnline']);
 Route::post('updateDeliveryInfo', [OrderAndPaymentController::class, 'updateDeliveryInfo']);
 Route::post('applyVoucher', [OrderAndPaymentController::class, 'applyVoucher']);
 
@@ -74,8 +79,9 @@ Route::post('updateAccountInfo', [AccountManagementController::class, 'updateAcc
 Route::post('verifyChangeMail', [AccountManagementController::class, 'verifyChangeMail']);
 Route::post('changePassword', [AccountManagementController::class, 'changePassword']);
 Route::post('updateDeliveryInfo', [OrderAndPaymentController::class, 'updateDeliveryInfo']);
- 
-
+Route::post('editPost', [HomeController::class, 'editPost']);
+Route::post('deletePost', [HomeController::class, 'deletePost']);
+  
  
 // admin api
 // admin fad

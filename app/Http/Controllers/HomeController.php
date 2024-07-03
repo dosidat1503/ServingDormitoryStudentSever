@@ -63,47 +63,13 @@ class HomeController extends Controller
         $itemQuantityEveryLoad = $request->input('itemQuantityEveryLoad');
         $startIndex = $request->input('startIndex');
         $isLikeAndSave = $request->input('isLikeAndSave');
+        $isManagePost = $request->input('isManagePost');
         $userID = $request->input('userID');
 
-        $infoPost = [];
-        // if ($textQueryPost === "") {
-        //     $infoPost = Post::orderBy("TIME", 'desc')->take(20)->get();
-        // } else {
-        //     $infoPost = Post::where("CONTENT", "LIKE", "%$textQueryPost%")->orderBy("TIME", 'desc')->take(20)->get();
-        // }
-        
+        $infoPost = []; 
 
         $infoPostQuery = Post::query();  
-        if($isLikeAndSave == true){
-            // $postIDLikeAndSave = DB::table('post_interaction')
-            //                 ->where('USER_ID', $userID)
-            //                 ->where('IS_LIKE', 1)
-            //                 ->orWhere('IS_SAVE', 1)
-            //                 ->pluck('POST_ID');
-
-            // $infoPostQuery->whereIn('POST_ID', $postIDLikeAndSave);
-            $infoPostQuery = DB::table('post')
-                    ->join('post_interaction', 'post.POST_ID', '=', 'post_interaction.POST_ID')
-                    ->where('post_interaction.USER_ID', $userID)
-                    ->where(function($query) {
-                        $query->where('post_interaction.IS_LIKE', 1)
-                              ->orWhere('post_interaction.IS_SAVE', 1);
-                    })
-                    ->select('post.*', 'post_interaction.IS_LIKE', 'post_interaction.IS_SAVE');
-        }
-        else{
-            $infoPostQuery = Post::query()
-                            ->leftJoin('post_interaction', function($join) use ($userID) {
-                                $join->on('post.POST_ID', '=', 'post_interaction.POST_ID')
-                                    ->where('post_interaction.USER_ID', '=', $userID);
-                            })
-                            ->select('post.*','post_interaction.IS_LIKE', 'post_interaction.IS_SAVE')
-                            ->where(function($query) {
-                                $query->where('post_interaction.IS_LIKE', 1)
-                                    ->orWhere('post_interaction.IS_SAVE', 1)
-                                    ->orWhereNull('post_interaction.POST_ID'); // Điều kiện này đảm bảo rằng cả những bài viết không có trong bảng post_interaction cũng được lấy ra
-                            });
-        }
+        
 
         if (!empty($textQueryPost)) {
             $infoPostQuery->where('CONTENT', 'LIKE', '%' . $textQueryPost . '%');
@@ -112,7 +78,7 @@ class HomeController extends Controller
         if (!empty($topics)) {
             $infoPostQuery->whereIn('TOPIC', $topics);
         }
- 
+        
         if (!is_null($startDate) && $endDate == "") {
             $infoPostQuery->where('TIME', '=', $startDate);
         }
@@ -127,22 +93,52 @@ class HomeController extends Controller
             }
         }
 
-
+        //nếu sortBy = 1 thì sắp xếp theo thời gian, 2 là sắp xếp theo số lượng like
         if ($sortBy == 2) {
             $infoPostQuery->orderBy('LIKE_QUANTITY', 'desc');
         } else {
             $infoPostQuery->orderBy('TIME', 'desc');
         }
 
+        //cái này dùng để lấy ra những bài viết mà user đã like hoặc save ( khi ở trong trang quản lý bài viết đã thích và lưu thì mới truyền giá trị cho $isLikeAndSave )
+        if($isLikeAndSave == true){
+            // $postIDLikeAndSave = DB::table('post_interaction')
+            //                 ->where('USER_ID', $userID)
+            //                 ->where('IS_LIKE', 1)
+            //                 ->orWhere('IS_SAVE', 1)
+            //                 ->pluck('POST_ID');
+
+            // $infoPostQuery->whereIn('POST_ID', $postIDLikeAndSave);
+            $infoPostQuery = $infoPostQuery->join('post_interaction', 'post.POST_ID', '=', 'post_interaction.POST_ID')
+                    ->where('post_interaction.USER_ID', $userID)
+                    ->where(function($query) {
+                        $query->where('post_interaction.IS_LIKE', 1)
+                              ->orWhere('post_interaction.IS_SAVE', 1);
+                    })
+                    ->select('post.*', 'post_interaction.IS_LIKE', 'post_interaction.IS_SAVE');
+        }
+        else{
+            // lọc ra những bài viết mà mình đã like và save để hiển thị ở trang chủ, hoặc khi tìm kiếm
+            $infoPostQuery = $infoPostQuery->leftJoin('post_interaction', function($join) use ($userID) {
+                                $join->on('post.POST_ID', '=', 'post_interaction.POST_ID')
+                                    ->where('post_interaction.USER_ID', '=', $userID);
+                            })
+                            ->select('post.*','post_interaction.IS_LIKE', 'post_interaction.IS_SAVE')
+                            ->where(function($query) {
+                                $query->where('post_interaction.IS_LIKE', 1)
+                                    ->orWhere('post_interaction.IS_SAVE', 1)
+                                    ->orWhereNull('post_interaction.POST_ID'); // Điều kiện này đảm bảo rằng cả những bài viết không có trong bảng post_interaction cũng được lấy ra
+                            });
+        }
+
+        if($isManagePost == true){
+            $infoPostQuery = $infoPostQuery->where('post.USER_ID', $userID);
+        }
+
         // Thực hiện truy vấn với sắp xếp và giới hạn số lượng kết quả
         $infoPost = $infoPostQuery->skip($startIndex)->take($itemQuantityEveryLoad)->get(); 
-
-        // $infoPost = Post::orderBy("TIME", 'desc')->take(20)->get();
-        // $infoUser = User::all();
-        $userID = $infoPost->pluck('USER_ID');
-        // $infoUser = User::whereIn('USER_ID', $userID)->select("NAME", "AVT_IMAGE_ID", "USER_ID")->get();
-        // $AvatarImageID = $infoUser->pluck('AVT_IMAGE_ID');
-        // $infoAvatarImage = Image::whereIn('IMAGE_ID', $AvatarImageID)->get();
+ 
+        $userID = $infoPost->pluck('USER_ID'); 
         
         $usersInfo = DB::table('user')
                         ->join('image', "user.AVT_IMAGE_ID", "=", "image.IMAGE_ID")
@@ -291,6 +287,44 @@ class HomeController extends Controller
         ]);
     }
 
+    
+    public function editPost(Request $request){
+        $userID = $request->userID;
+        $postID = $request->postID;
+        $content = $request->content;
+
+        DB::table("post")
+        ->where('POST_ID', $postID)
+        ->update(['CONTENT' => $content]);
+
+        return response()->json([
+            'statusCode' => 200,
+            'message' => 'Post has been updated',
+        ]);
+    }
+
+    public function deletePost(Request $request){ 
+        $postID = $request->postID;
+        // delete relate info in post_image post_interact image
+        DB::table("post_image")
+        ->join('image', 'post_image.IMAGE_ID', '=', 'image.IMAGE_ID')
+        ->where('POST_ID', $postID)
+        ->delete();
+
+        DB::table("post_interaction")
+        ->where('POST_ID', $postID)
+        ->delete();
+
+        DB::table("post")
+        ->where('POST_ID', $postID)
+        ->delete();
+
+        return response()->json([
+            'statusCode' => 200,
+            'message' => 'Post has been deleted',
+        ]);
+    }
+
     public function setData(Request $request) {
         //insert dữ liệu để test load dữ liệu ở quản lý đơn hàng
         {
@@ -401,7 +435,7 @@ class HomeController extends Controller
                 'created_at' => \Carbon\Carbon::now()
             ]);
             DB::table('user')->insert([
-                'EMAIL' => 'dosidat15031712@gmail.com',
+                'EMAIL' => 'dosidat@gmail.com',
                 'PASSWORD' => '$2y$10$muWNpPd9xBFoRCLnjfdBieUuPn5SLW5IsdslelTqlo/bo7.DyJLd.',
                 'PHONE' => '0968795742',
                 'NAME' => 'Trần Trung Hiếu',
@@ -794,17 +828,42 @@ class HomeController extends Controller
                 }
     
             }
-            DB::table("VOUCHER")
-            ->insert([
-                'VOUCHER_CODE' => 'VC_CTNQ_T1',
-                'DISCOUNT_VALUE' => 10000, 
-                'MAX_QUANTITY' => 100,
-                'VOUCHER_CODE' => "CT_NGQ_T1",
-                'SHOP_ID' => 1, 
-                'START_DATE' => '2024-05-01',
-                'EXPIRATION_DATE' => '2024-05-31',
-                'REMAIN_AMOUNT' => 50
-            ]);
+            // DB::table("VOUCHER")
+            // ->insert([
+            //     'VOUCHER_CODE' => 'VC_CTNQ_T1',
+            //     'DISCOUNT_VALUE' => 10000, 
+            //     'MAX_QUANTITY' => 100,
+            //     'VOUCHER_CODE' => "CT_NGQ_T1",
+            //     'SHOP_ID' => 1, 
+            //     'START_DATE' => '2024-05-01',
+            //     'EXPIRATION_DATE' => '2024-05-31',
+            //     'REMAIN_AMOUNT' => 50
+            // ]);
+
+            
+            //insert voucher
+            {
+                DB::table('voucher')->insert([
+                    'VOUCHER_CODE' => 'CT_NGQ_T7',
+                    'DISCOUNT_VALUE' => 10, 
+                    'MAX_QUANTITY' => 100,
+                    'SHOP_ID' => 1, 
+                    'MIN_ORDER_TOTAL' => 50000,
+                    'START_DATE' => '2024-07-01',
+                    'EXPIRATION_DATE' => '2024-07-31',
+                    'REMAIN_AMOUNT' => 90
+                ]);
+                DB::table('voucher')->insert([
+                    'VOUCHER_CODE' => 'CT_NGQ_T8',
+                    'DISCOUNT_VALUE' => 20, 
+                    'MAX_QUANTITY' => 100,
+                    'SHOP_ID' => 1, 
+                    'MIN_ORDER_TOTAL' => 30000,
+                    'START_DATE' => '2024-08-01',
+                    'EXPIRATION_DATE' => '2024-08-31',
+                    'REMAIN_AMOUNT' => 100
+                ]);
+            }
 
             //insert order 
             for($i = 1; $i <= 5; $i++) { 
@@ -812,10 +871,10 @@ class HomeController extends Controller
                     DB::table('order')->insert([ 
                         'USER_ID' => 1,
                         'ADDRESS_ID' => 1,
-                        'PAYMENT_METHOD' => "Tiền mặt",
-                        'VOUCHER_CODE' => "CT_NGQ_T1",
+                        'PAYMENT_METHOD' => ( $j % 4 ) == 0 ? "Tiền mặt" : "Chuyển khoản",
+                        'VOUCHER_CODE' => "CT_NGQ_T7",
                         'STATUS' => $i,
-                        'PAYMENT_STATUS' => $i,
+                        'PAYMENT_STATUS' => ( $j % 2 ) == 0 ? 1: 0 ,
                         'TOTAL_PAYMENT' => 21.98,
                         'NOTE' => 'Giao sớm giúp em!!',
                         'DATE' => \Carbon\Carbon::now()

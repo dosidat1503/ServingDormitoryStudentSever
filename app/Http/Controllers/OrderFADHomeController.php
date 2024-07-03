@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\dd;
 use Illuminate\Support\Facades\DB;
 
+use Illuminate\Support\Facades\Log;
 
 
 class OrderFADHomeController extends Controller
@@ -140,12 +141,21 @@ class OrderFADHomeController extends Controller
                     ->get();
                 
         $size = FAD::where('ID_PARENTFADOFSIZE', $request->FAD_ID)->get();
+
+        $rateInfo = DB::table('order_detail')
+                    ->join("order", "order_detail.ORDER_ID", "=", "order.ORDER_ID")
+                    ->join("user", "order.USER_ID", "=", "user.USER_ID")
+                    ->join("image", "user.AVT_IMAGE_ID", "=", "image.IMAGE_ID")
+                    ->where([['FAD_ID', $request->FAD_ID], ['DATE_RATE', '!=', null]])
+                    ->select('STAR_QUANTITY_RATE', 'CONTENT_RATE', DB::raw('DATE(DATE_RATE) as DATE_RATE'), 'user.NAME', 'image.URL AS USER_AVT_URL')
+                    ->get();
         
         return response()->json([
             'statusCode' => 200,
             'topping' => $topping,
             'size' => $size,
             'shopInfo' => $shopInfo[0],
+            'rateInfo' => $rateInfo,
         ]);
     }
 
@@ -161,6 +171,10 @@ class OrderFADHomeController extends Controller
         ->leftJoin('IMAGE', 'FAD.IMAGE_ID', '=', 'IMAGE.IMAGE_ID')
         ->leftJoin('SHOP', 'FAD.SHOP_ID', '=', 'SHOP.SHOP_ID')
         ->leftJoin('IMAGE AS SHOP_IMAGE', 'SHOP.AVT_IMAGE_ID', '=', 'SHOP_IMAGE.IMAGE_ID')
+        ->where([
+            ['FAD.ID_PARENTFADOFTOPPING', null],
+            ['FAD.ID_PARENTFADOFSIZE', null]
+        ])
         ->addSelect('IMAGE.URL AS FOOD_IMAGE_URL', 'SHOP.SHOP_NAME', 'SHOP_IMAGE.URL AS SHOP_IMAGE_URL');
 
         if ($textToSearchFAD != "") {
@@ -195,6 +209,22 @@ class OrderFADHomeController extends Controller
         return response()->json([
             'statusCode' => 200, 
             'FADInfo_eloquent' => $FADInfo_eloquent, 
+        ]);
+    }
+
+    public function getVoucherInfo(Request $request){
+        $FADShop_ID = $request->FADShop_ID;
+
+        $voucherInfo = DB::table('VOUCHER')
+                    ->leftJoin('SHOP', 'VOUCHER.SHOP_ID', '=', 'SHOP.SHOP_ID') 
+                    ->select('VOUCHER.VOUCHER_ID', 'VOUCHER_CODE', 'DISCOUNT_VALUE', 'MAX_DISCOUNT_VALUE', 'MIN_ORDER_TOTAL', 'START_DATE', 'EXPIRATION_DATE', 'REMAIN_AMOUNT', )
+                    ->where('VOUCHER.SHOP_ID', $FADShop_ID)
+                    ->get();
+        
+        Log::info('Order Data: ' . json_encode($FADShop_ID));
+        return response()->json([
+            'statusCode' => 200,
+            'voucherInfo' => $voucherInfo,
         ]);
     }
 }
