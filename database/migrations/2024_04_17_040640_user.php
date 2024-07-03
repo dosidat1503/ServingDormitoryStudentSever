@@ -18,11 +18,15 @@ return new class extends Migration
             $table->string('PASSWORD');
             $table->string('PHONE')->unique();
             $table->string('NAME');
-            $table->date('BIRTHDAY');
-            $table->boolean('GENDER');
+            $table->date('BIRTHDAY')->nullable();
+            $table->string('LINK_FB')->nullable();
+            $table->string('SCHOOL')->nullable();
+            $table->string('ADDRESS')->nullable();
+            $table->boolean('GENDER'); 
+            $table->string('CODEVERIFYCHANGEMAIL')->nullable();
             $table->unsignedBigInteger('AVT_IMAGE_ID')->nullable();  
 
-            $table->foreign('AVT_IMAGE_ID')->references('IMAGE_ID')->on('IMAGE'); 
+            $table->foreign('AVT_IMAGE_ID')->references('IMAGE_ID')->on('IMAGE');  
             $table->timestamp('email_verified_at')->nullable();
 
             $table->timestamp('created_at')->nullable();
@@ -37,3 +41,4 @@ return new class extends Migration
         Schema::dropIfExists('USER');
     }
 };
+

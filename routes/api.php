@@ -66,12 +66,15 @@ Route::get('getDeliveryInfo', [OrderAndPaymentController::class, 'getDeliveryInf
 
 Route::post('saveOrder', [OrderAndPaymentController::class, 'saveOrder']);
 Route::post('updateDeliveryInfo', [OrderAndPaymentController::class, 'updateDeliveryInfo']);
+Route::post('applyVoucher', [OrderAndPaymentController::class, 'applyVoucher']);
 
 //acount
 Route::get('getInfoAccount', [AccountManagementController::class, 'getInfoAccount']);
 Route::post('updateAccountInfo', [AccountManagementController::class, 'updateAccountInfo']);
 Route::post('verifyChangeMail', [AccountManagementController::class, 'verifyChangeMail']);
 Route::post('changePassword', [AccountManagementController::class, 'changePassword']);
+Route::post('updateDeliveryInfo', [OrderAndPaymentController::class, 'updateDeliveryInfo']);
+ 
 
  
 // admin api

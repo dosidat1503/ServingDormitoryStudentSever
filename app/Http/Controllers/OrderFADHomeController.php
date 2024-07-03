@@ -114,11 +114,30 @@ class OrderFADHomeController extends Controller
 
     public function getFADDetailInfo(Request $request){
         // $topping = FAD::where('ID_PARENTFADOFTOPPING', $request->FAD_ID)->get();
+        // $topping = DB::table('FAD')
+        //         ->leftJoin('IMAGE', 'FAD.IMAGE_ID', '=', 'IMAGE.IMAGE_ID')
+        //         ->leftJoin('SHOP', 'FAD.SHOP_ID', '=', 'SHOP.SHOP_ID')
+        //         ->select('FAD.FAD_ID', 'FAD.FAD_NAME', 'FAD.FAD_PRICE', 'IMAGE.URL AS TOPPING_URL', 'SHOP_NAME')
+        //         ->where('ID_PARENTFADOFTOPPING', $request->FAD_ID)
+        //         ->get();
+        
         $topping = DB::table('FAD')
-                ->leftJoin('IMAGE', 'FAD.IMAGE_ID', '=', 'IMAGE.IMAGE_ID')
-                ->select('FAD.FAD_ID', 'FAD.FAD_NAME', 'FAD.FAD_PRICE', 'IMAGE.URL AS TOPPING_URL')
-                ->where('ID_PARENTFADOFTOPPING', $request->FAD_ID)
+                ->leftJoin('IMAGE as IMAGE_FAD', 'FAD.IMAGE_ID', '=', 'IMAGE_FAD.IMAGE_ID')
+                ->leftJoin('SHOP', 'FAD.SHOP_ID', '=', 'SHOP.SHOP_ID')
+                ->leftJoin('IMAGE as IMAGE_AVT', 'SHOP.AVT_IMAGE_ID', '=', 'IMAGE_AVT.IMAGE_ID')
+                ->select('FAD.FAD_ID', 'FAD.FAD_NAME', 'FAD.FAD_PRICE', 
+                            'IMAGE_FAD.URL AS TOPPING_URL', 
+                            'SHOP.SHOP_NAME', 'SHOP.SHOP_ID',
+                            'IMAGE_AVT.URL AS SHOP_AVT_URL')
+                ->where('FAD.ID_PARENTFADOFTOPPING', $request->FAD_ID)
                 ->get();
+
+        $shopInfo = DB::table('FAD')
+                    ->leftJoin('SHOP', 'FAD.SHOP_ID', '=', 'SHOP.SHOP_ID')
+                    ->leftJoin('IMAGE', 'SHOP.AVT_IMAGE_ID', '=', 'IMAGE.IMAGE_ID')
+                    ->select('SHOP.SHOP_NAME', 'SHOP.SHOP_ID', 'IMAGE.URL AS SHOP_AVT_URL')
+                    ->where('FAD.FAD_ID', $request->FAD_ID)
+                    ->get();
                 
         $size = FAD::where('ID_PARENTFADOFSIZE', $request->FAD_ID)->get();
         
@@ -126,6 +145,7 @@ class OrderFADHomeController extends Controller
             'statusCode' => 200,
             'topping' => $topping,
             'size' => $size,
+            'shopInfo' => $shopInfo[0],
         ]);
     }
 
