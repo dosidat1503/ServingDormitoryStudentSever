@@ -19,6 +19,9 @@ return new class extends Migration
             $table->integer('QUANTITY');
             $table->integer('PRICE'); 
             $table->string('SIZE')->nullable(); 
+            $table->timestamp('DATE_RATE')->nullable();
+            $table->string('CONTENT_RATE')->nullable();
+            $table->integer('STAR_QUANTITY_RATE')->nullable(); 
             $table->integer('ID_PARENT_OD_OF_THIS_OD')->nullable(); 
 
             $table->foreign('FAD_ID')->references('FAD_ID')->on('FAD'); 
