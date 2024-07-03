@@ -81,11 +81,19 @@ class AuthenticationController extends Controller
                     ]);
                 }   
                 $token = $taikhoan->createToken($taikhoan->email.'_Token')->plainTextToken;
+
+
+                $infoUserAtHome =  DB::table("user")
+                ->join("image", "image.IMAGE_ID", "=", "user.AVT_IMAGE_ID")
+                ->where("user.USER_ID", $taikhoan->USER_ID)
+                ->select("user.NAME", "image.URL as AVT_URL")
+                ->first();
                     
                 return response()->json([
                     'statusCode' => 200,
                     'token' => $token,
                     'userID' => $taikhoan->USER_ID,
+                    'infoUserAtHome' => $infoUserAtHome
                 ]);
                 // }
             } 
