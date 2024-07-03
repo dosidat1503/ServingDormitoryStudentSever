@@ -81,8 +81,7 @@ Route::post('changePassword', [AccountManagementController::class, 'changePasswo
 Route::post('updateDeliveryInfo', [OrderAndPaymentController::class, 'updateDeliveryInfo']);
 Route::post('editPost', [HomeController::class, 'editPost']);
 Route::post('deletePost', [HomeController::class, 'deletePost']);
- 
-
+  
  
 // admin api
 // admin fad

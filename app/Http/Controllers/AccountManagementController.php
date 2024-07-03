@@ -13,7 +13,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
-class AuthenticationController extends Controller
+class AccountManagementController extends Controller
 {
     public function signup(Request $request) {
         $Validator = Validator::make($request->all(), [ 
