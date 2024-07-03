@@ -12,7 +12,7 @@ class Order_detail extends Model
     
     protected $primaryKey = 'ORDER_DETAIL_ID';
     public $timestamps = false;
-    protected $fillable = ['ORDER_ID', 'FAD_ID', 'QUANTITY', 'PRICE', 'ID_PARENT_OD_OF_THIS_OD', 'DATE', 'SIZE'];  
+    protected $fillable = ['ORDER_ID', 'FAD_ID', 'QUANTITY', 'PRICE', 'ID_PARENT_OD_OF_THIS_OD', 'DATE', 'SIZE', 'DATE_RATE', 'CONTENT_RATE', 'STAR_QUANTITY_RATE'];  
 
     public function fad()
     {
