@@ -21,7 +21,7 @@ class AdminOrderController extends Controller
         $infoOrder = Order::where([
             ['STATUS', '=', $orderStatusCode]
         ])
-            ->with(['orderDetails.fad'])
+            ->with(['orderDetails.fad.image'])
             ->withCount('orderDetails')
             ->orderBy('DATE', 'desc')
             ->skip($startIndex)

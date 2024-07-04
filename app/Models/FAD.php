@@ -20,6 +20,7 @@ class FAD extends Model
         'ID_PARENTFADOFSIZE',
         'DESCRIPTION',
         'IS_DELETED',
+        'QUANTITY',
         'CATEGORY',
         'TAG',
         'DATE'
