@@ -11,7 +11,11 @@ class Order extends Model
     protected $table = 'Order';
     protected $primaryKey = 'ORDER_ID';
     public $timestamps = false;
-    protected $fillable = ['USER_ID', 'ORDER_ADDRESS_ID', 'VOUCHER_ID', 'PAYMENT_METHOD', 'STATUS', 'TOTAL_PAYMENT']; 
+    protected $fillable = [
+        'USER_ID', 'ADDRESS_ID', 'DISCOUNT_VALUE', 'NOTE', 
+        'VOUCHER_CODE', 'PAYMENT_METHOD', 
+        'STATUS', 'TOTAL_PAYMENT', 
+        'DATE', 'PAYMENT_STATUS']; 
  
     public function orderDetails()
     {

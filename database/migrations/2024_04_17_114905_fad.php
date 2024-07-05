@@ -16,8 +16,8 @@ return new class extends Migration
             $table->bigIncrements("FAD_ID");
             $table->string('FAD_NAME');
             $table->integer('FAD_PRICE');
-            $table->integer('QUANTITY')->default(0);
             $table->unsignedBigInteger('IMAGE_ID');
+            $table->integer('QUANTITY')->default(0);
             $table->unsignedBigInteger('SHOP_ID');
             $table->integer('ID_PARENTFADOFTOPPING')->nullable();
             $table->integer('ID_PARENTFADOFSIZE')->nullable();
@@ -28,7 +28,7 @@ return new class extends Migration
             $table->timestamp('DATE');
 
             $table->foreign('IMAGE_ID')->references('IMAGE_ID')->on('IMAGE');
-            $table->foreign('SHOP_ID')->references('SHOP_ID')->on('SHOP');
+            $table->foreign('SHOP_ID')->references('SHOP_ID')->on('SHOP'); 
         });
     }
 

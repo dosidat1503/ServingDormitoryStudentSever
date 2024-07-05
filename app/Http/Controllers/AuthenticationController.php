@@ -77,13 +77,20 @@ class AuthenticationController extends Controller
                         'statusCode' => 4,
                         'message' => "Tài khoản chưa được xác nhận",
                     ]);
-                }
-                $token = $taikhoan->createToken($taikhoan->email . '_Token')->plainTextToken;
+                }   
+                $token = $taikhoan->createToken($taikhoan->email.'_Token')->plainTextToken;
 
-                return response()->json([
+
+                $infoUserAtHome =  DB::table("user")
+                ->join("image", "image.IMAGE_ID", "=", "user.AVT_IMAGE_ID")
+                ->where("user.USER_ID", $taikhoan->USER_ID)
+                ->select("user.NAME", "image.URL as AVT_URL")
+                ->first();
+                                    return response()->json([
                     'statusCode' => 200,
                     'token' => $token,
                     'userID' => $taikhoan->USER_ID,
+                    'infoUserAtHome' => $infoUserAtHome
                 ]);
                 // }
             }

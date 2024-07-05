@@ -4,6 +4,8 @@ use App\Http\Controllers\AdminFADController;
 use App\Http\Controllers\AdminOrderController;
 use App\Http\Controllers\AdminShopController;
 use App\Http\Controllers\AdminVoucherController;
+use App\Http\Controllers\AccountManagementController;
+use App\Http\Controllers\AdminFADController;
 use App\Http\Controllers\AuthenticationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -38,22 +40,30 @@ Route::get('/', function () {
 Route::get('/email/verify/{id}/{hash}', [AuthenticationController::class, 'verify'])
     ->middleware(['signed'])->name('verification.verify');
 
-Route::post('signup', [AuthenticationController::class, 'signup']);
+// authentication apiRoute::post('signup', [AuthenticationController::class, 'signup']);
 Route::post('signin', [AuthenticationController::class, 'signin']);
 
-Route::post('addPost', [HomeController::class, 'addPost']);
+
+// Posts apiRoute::post('addPost', [HomeController::class, 'addPost']);
 Route::get('getInfoPost', [HomeController::class, 'getInfoPost']);
 Route::get('searchPost', [HomeController::class, 'searchPost']);
 Route::get('setData', [HomeController::class, 'setData']);
+Route::post('interactPost', [HomeController::class, 'interactPost']);
 
-Route::get('getOrderInfoOfUser', [OrderManagementOfUserController::class, 'getOrderInfoOfUser']);
+// Orders apiRoute::get('getOrderInfoOfUser', [OrderManagementOfUserController::class, 'getOrderInfoOfUser']);
 Route::get('getOrderDetailInfo', [OrderManagementOfUserController::class, 'getOrderDetailInfo']);
+Route::get('getInfoProductToRate', [OrderManagementOfUserController::class, 'getInfoProductToRate']);
+Route::post('saveRate', [OrderManagementOfUserController::class, 'saveRate']);
+Route::post('changeOrderStatusToCancel', [OrderManagementOfUserController::class, 'changeOrderStatusToCancel']);
 
+
+// Shop api
 Route::get('getFADShop', [OrderFADHomeController::class, 'getFADShop']);
 Route::get('getFADShopDetailInfo', [OrderFADHomeController::class, 'getFADShopDetailInfo']);
-Route::get('getFADInfoAtHome', [OrderFADHomeController::class, 'getFADInfoAtHome']);
+Route::get('getVoucherInfo', [OrderFADHomeController::class, 'getVoucherInfo']);
+Route::get('getFADInfo', [OrderFADHomeController::class, 'getFADInfo']);
 Route::get('getFADDetailInfo', [OrderFADHomeController::class, 'getFADDetailInfo']);
-Route::get('searchFAD', [OrderFADHomeController::class, 'searchFAD']);
+Route::get('userSearchFAD', [OrderFADHomeController::class, 'userSearchFAD']);
 
 Route::post('sendMailRecoverPassword', [AuthenticationController::class, 'sendMailRecoverPassword']);
 
@@ -93,7 +103,6 @@ Route::put('/account/update/{id}', [UserController::class, 'updateUser']);
 Route::post('/admin/createShop', [AdminShopController::class, 'createShop']);
 Route::get('/admin/getShopDetail/{id}', [AdminShopController::class, 'getShopDetail']);
 Route::put('/admin/updateShopDetail/{id}', [AdminShopController::class, 'updateShopDetail']);
-Route::delete('/admin/deleteShop/{id}', [AdminShopController::class, 'deleteShop']);
-// Route::get('/email/verify', function () {
+Route::delete('/admin/deleteShop/{id}', [AdminShopController::class, 'deleteShop']);// Route::get('/email/verify', function () {
 //     return view('auth.verify-email');
 // })->middleware('auth')->name('verification.notice');
