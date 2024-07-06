@@ -287,7 +287,42 @@ class HomeController extends Controller
         ]);
     }
 
-    
+    public function suggestPosts(Request $request)
+    {
+        $userId = $request->userId;
+        // Lấy tất cả các bài viết mà người dùng đã thích
+        $likedPosts = DB::table('post_interaction')
+            ->where('USER_ID', $userId)
+            ->where('IS_LIKE', 1)
+            ->pluck('POST_ID');
+
+        // Lấy danh sách của những người cũng thích các bài viết đó
+        $usersLikedSamePosts = DB::table('post_interaction')
+            ->whereIn('POST_ID', $likedPosts)
+            ->where('IS_LIKE', 1)
+            ->where('USER_ID', '!=', $userId)
+            ->pluck('USER_ID');
+
+        // Lấy những bài viết mà những người khác thích
+        $suggestedPosts = DB::table('post_interaction')
+            ->whereIn('USER_ID', $usersLikedSamePosts)
+            ->where('IS_LIKE', 1)
+            ->whereNotIn('POST_ID', $likedPosts)
+            ->pluck('POST_ID')
+            ->unique();
+
+        // Trả về danh sách các bài viết được gợi ý
+        $posts = DB::table('post')->whereIn('POST_ID', $suggestedPosts)
+            ->where('IS_DELETED', false)
+            ->orderBy('TIME', 'desc')
+            ->get();
+
+        return response()->json([
+            'statusCode' => 200,
+            'posts' => $posts,
+            'message' => 'Lọc post thành công',
+        ]);
+    }
     public function editPost(Request $request){
         $userID = $request->userID;
         $postID = $request->postID;

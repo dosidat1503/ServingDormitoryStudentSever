@@ -46,7 +46,7 @@ Route::get('getInfoPost', [HomeController::class, 'getInfoPost']);
 Route::get('searchPost', [HomeController::class, 'searchPost']);
 Route::get('setData', [HomeController::class, 'setData']);
 Route::post('interactPost', [HomeController::class, 'interactPost']);
-
+Route::get('suggestPost', [HomeController::class, 'suggestPosts']);
 // Orders api
 Route::get('getOrderInfoOfUser', [OrderManagementOfUserController::class, 'getOrderInfoOfUser']);
 Route::get('getOrderDetailInfo', [OrderManagementOfUserController::class, 'getOrderDetailInfo']);
