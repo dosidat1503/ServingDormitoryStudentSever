@@ -5,7 +5,6 @@ use App\Http\Controllers\AdminOrderController;
 use App\Http\Controllers\AdminShopController;
 use App\Http\Controllers\AdminVoucherController;
 use App\Http\Controllers\AccountManagementController;
-use App\Http\Controllers\AdminFADController;
 use App\Http\Controllers\AuthenticationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -49,8 +48,9 @@ Route::get('getInfoPost', [HomeController::class, 'getInfoPost']);
 Route::get('searchPost', [HomeController::class, 'searchPost']);
 Route::get('setData', [HomeController::class, 'setData']);
 Route::post('interactPost', [HomeController::class, 'interactPost']);
+Route::get('suggestPost', [HomeController::class, 'suggestPosts']);
 
-// Orders apiRoute::get('getOrderInfoOfUser', [OrderManagementOfUserController::class, 'getOrderInfoOfUser']);
+Route::get('getOrderInfoOfUser', [OrderManagementOfUserController::class, 'getOrderInfoOfUser']);
 Route::get('getOrderDetailInfo', [OrderManagementOfUserController::class, 'getOrderDetailInfo']);
 Route::get('getInfoProductToRate', [OrderManagementOfUserController::class, 'getInfoProductToRate']);
 Route::post('saveRate', [OrderManagementOfUserController::class, 'saveRate']);
@@ -103,6 +103,7 @@ Route::put('/account/update/{id}', [UserController::class, 'updateUser']);
 Route::post('/admin/createShop', [AdminShopController::class, 'createShop']);
 Route::get('/admin/getShopDetail/{id}', [AdminShopController::class, 'getShopDetail']);
 Route::put('/admin/updateShopDetail/{id}', [AdminShopController::class, 'updateShopDetail']);
-Route::delete('/admin/deleteShop/{id}', [AdminShopController::class, 'deleteShop']);// Route::get('/email/verify', function () {
+Route::delete('/admin/deleteShop/{id}', [AdminShopController::class, 'deleteShop']);
+// Route::get('/email/verify', function () {
 //     return view('auth.verify-email');
 // })->middleware('auth')->name('verification.notice');

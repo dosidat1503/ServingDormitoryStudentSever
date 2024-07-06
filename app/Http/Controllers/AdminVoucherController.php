@@ -19,23 +19,44 @@ class AdminVoucherController extends Controller
             return response()->json(['error' => $validator->errors()], 400);
         }
 
+        $notYetActiveVouchers = [];
+        $currentActiveVouchers = [];
+        $usedUpVouchers = [];
+
+        $currentDate = now()->toDateString();
+
         $shopId = $request->shop_id;
-        $index = $request->index;
+        // $index = $request->index ? $request->index : 1;
+
+        // $vouchers = Voucher::where([
+        //     ['SHOP_ID', '=', $shopId],
+        // ])->paginate(10, ['*'], 'page', $index);
 
         $vouchers = Voucher::where([
             ['SHOP_ID', '=', $shopId],
-            ['IS_DELETED', '=', 0]
-        ])->paginate(10, ['*'], 'page', $index);
-
-        $deletedVouchers = Voucher::where([
-            ['SHOP_ID', '=', $shopId],
-            ['IS_DELETED', '=', 1]
+            ['IS_DELETED', '=', '0']
         ])->get();
+
+        // $deletedVouchers = Voucher::where([
+        //     ['SHOP_ID', '=', $shopId],
+        //     ['IS_DELETED', '=', 1]
+        // ])->get();
+
+        foreach ($vouchers as $voucher) {
+            if ($voucher->START_DATE > $currentDate) {
+                $notYetActiveVouchers[] = $voucher;
+            } elseif ($voucher->EXPIRATION_DATE < $currentDate || $voucher->REMAIN_AMOUNT <= 0) {
+                $usedUpVouchers[] = $voucher;
+            } else {
+                $currentActiveVouchers[] = $voucher;
+            }
+        }
 
         return response()->json([
             "data" => [
-                "vouchers" => $vouchers,
-                "deleted_vouchers" => $deletedVouchers
+                "currentActiveVouchers" => $currentActiveVouchers,
+                "notYetActiveVouchers" => $notYetActiveVouchers,
+                "usedUpVouchers" => $usedUpVouchers
             ],
             "message" => "Lấy danh sách voucher thành công",
             "statusCode" => 200
@@ -66,6 +87,7 @@ class AdminVoucherController extends Controller
                 'voucher_code' => 'required|string|max:191',
                 'shop_id' => 'required|integer',
                 'discount_value' => 'required|integer',
+                'max_discount_value' => 'sometimes|nullable|integer',
                 'min_order_total' => 'required|numeric',
                 'start_date' => 'required|string',
                 'end_date' => 'required|string',
@@ -76,10 +98,12 @@ class AdminVoucherController extends Controller
                 'VOUCHER_CODE' => $request->voucher_code,
                 'SHOP_ID' => $request->shop_id,
                 'DISCOUNT_VALUE' => $request->discount_value,
+                'MAX_DISCOUNT_VALUE' => $request->max_discount_value,
                 'MIN_ORDER_TOTAL' => $request->min_order_total,
                 'START_DATE' => $request->start_date,
                 'EXPIRATION_DATE' => $request->end_date,
                 'MAX_QUANTITY' => $request->max_quantity,
+                'REMAIN_AMOUNT' => $request->max_quantity,
                 'IS_DELETED' => 0
             ]);
 
@@ -174,17 +198,29 @@ class AdminVoucherController extends Controller
                 'min_order_total' => 'required|numeric',
                 'start_date' => 'required|string',
                 'end_date' => 'required|string',
-                'max_quantity' => 'required|integer'
+                'max_quantity' => 'required|integer',
+                'remain_amount' => 'sometimes|nullable|integer'
             ]);
-
-            $voucher->update([
-                'VOUCHER_CODE' => $request->voucher_code,
-                'DISCOUNT_VALUE' => $request->discount_value,
-                'MIN_ORDER_TOTAL' => $request->min_order_total,
-                'START_DATE' => $request->start_date,
-                'EXPIRATION_DATE' => $request->end_date,
-                'MAX_QUANTITY' => $request->max_quantity
-            ]);
+            if ($request->remain_amount) {
+                $voucher->update([
+                    'VOUCHER_CODE' => $request->voucher_code,
+                    'DISCOUNT_VALUE' => $request->discount_value,
+                    'MIN_ORDER_TOTAL' => $request->min_order_total,
+                    'START_DATE' => $request->start_date,
+                    'EXPIRATION_DATE' => $request->end_date,
+                    'MAX_QUANTITY' => $request->max_quantity,
+                    'REMAIN_AMOUNT' => $request->remain_amount
+                ]);
+            } else {
+                $voucher->update([
+                    'VOUCHER_CODE' => $request->voucher_code,
+                    'DISCOUNT_VALUE' => $request->discount_value,
+                    'MIN_ORDER_TOTAL' => $request->min_order_total,
+                    'START_DATE' => $request->start_date,
+                    'EXPIRATION_DATE' => $request->end_date,
+                    'MAX_QUANTITY' => $request->max_quantity
+                ]);
+            }
 
             return response()->json(
                 [

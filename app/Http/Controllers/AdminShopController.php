@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Shop;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class AdminShopController extends Controller
@@ -37,7 +38,6 @@ class AdminShopController extends Controller
                 'created_at' => Carbon::now(),
                 'IS_DELETED' => 0
             ]);
-
             return response()->json(
                 [
                     'data' => $shop,
@@ -60,8 +60,34 @@ class AdminShopController extends Controller
 
     public function getShopDetail(Request $request, $id)
     {
-        $shop = Shop::where('SHOP_ID', $id)->where('IS_DELETED', 0)->first();
-
+        $shop = DB::select("SELECT 
+                                S.SHOP_ID,
+                                S.SHOP_NAME,
+                                S.PHONE,
+                                S.OPENTIME,
+                                S.CLOSETIME,
+                                S.AVT_IMAGE_ID,
+                                IA.URL AS AVATAR_IMAGE_URL,
+                                S.COVER_IMAGE_ID,
+                                IC.URL AS COVER_IMAGE_URL,
+                                S.SHOP_OWNER_ID,
+                                US.EMAIL,
+                                S.ADDRESS_ID,
+                                CONCAT(AC.DETAIL, \", \", AC.COMMUNE, \", \", AC.DISTRICT, \", \", AC.PROVINCE) AS ADDRESS,
+                                S.DESCRIPTION,
+                                S.IS_DELETED,
+                                S.created_at
+                            FROM
+                            shop S
+                        LEFT JOIN 
+                            image IA ON S.AVT_IMAGE_ID = IA.IMAGE_ID
+                        LEFT JOIN 
+                            image IC ON S.COVER_IMAGE_ID = IC.IMAGE_ID
+                        LEFT JOIN 
+                            address AC ON S.ADDRESS_ID = AC.ADDRESS_ID
+                        LEFT JOIN
+                            user US ON S.SHOP_OWNER_ID = US.USER_ID
+                        WHERE s.SHOP_ID = {$id}");
         if (!$shop) {
             return response()->json(
                 [
@@ -74,7 +100,7 @@ class AdminShopController extends Controller
 
         return response()->json(
             [
-                'data' => $shop,
+                'data' => $shop[0],
                 'message' => 'Lấy thông tin shop thành công',
                 'statusCode' => 200,
             ]
