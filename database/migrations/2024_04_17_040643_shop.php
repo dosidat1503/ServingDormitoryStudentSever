@@ -16,6 +16,8 @@ return new class extends Migration
             $table->bigIncrements("SHOP_ID");
             $table->string('SHOP_NAME');
             $table->string('PHONE');
+            $table->time('OPENTIME');
+            $table->time('CLOSETIME');
             $table->unsignedBigInteger('AVT_IMAGE_ID');
             $table->unsignedBigInteger('COVER_IMAGE_ID');
             $table->unsignedBigInteger('SHOP_OWNER_ID');
@@ -26,7 +28,7 @@ return new class extends Migration
             $table->foreign('AVT_IMAGE_ID')->references('IMAGE_ID')->on('IMAGE');
             $table->foreign('COVER_IMAGE_ID')->references('IMAGE_ID')->on('IMAGE');
             $table->foreign('SHOP_OWNER_ID')->references('USER_ID')->on('USER');
-            
+
             $table->timestamp('created_at');
         });
     }

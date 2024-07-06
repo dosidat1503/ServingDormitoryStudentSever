@@ -93,6 +93,32 @@ Route::put('updateFAD/{id}', [AdminFADController::class, 'updateFAD']);
 Route::delete('deleteFAD/{id}', [AdminFADController::class, 'deleteFAD']);
 
 
+// admin Order
+Route::get('admin/getAllOrders', [AdminOrderController::class, 'getAllUserOrders']);
+Route::get('admin/detailOrder/{id}', [AdminOrderController::class, 'getOrderDetailInfo']);
+Route::patch('admin/updateStatusOrder/{id}', [AdminOrderController::class, 'updateOrderStatus']);
+
+
+//admin Voucher
+Route::post('/admin/addVoucher', [AdminVoucherController::class, 'addVoucher']);
+Route::get('/admin/getAllVouchers', [AdminVoucherController::class, 'getAllVouchers']);
+Route::get('/admin/searchVoucher', [AdminVoucherController::class, 'searchVoucher']);
+Route::get('/admin/getVoucher/{id}', [AdminVoucherController::class, 'getDetailVoucher']);
+Route::put('/admin/updateVoucher/{id}', [AdminVoucherController::class, 'updateVoucher']);
+Route::delete('/admin/deleteVoucher/{id}', [AdminVoucherController::class, 'deleteVoucher']);
+
+// admin Account
+Route::get('/account/{id}', [UserController::class, 'getUserDetails']);
+Route::put('/account/update/{id}', [UserController::class, 'updateUser']);
+
+// admin Shop
+Route::post('/admin/createShop', [AdminShopController::class, 'createShop']);
+Route::get('/admin/getShopDetail/{id}', [AdminShopController::class, 'getShopDetail']);
+Route::put('/admin/updateShopDetail/{id}', [AdminShopController::class, 'updateShopDetail']);
+Route::delete('/admin/deleteShop/{id}', [AdminShopController::class, 'deleteShop']);
+
+
+
 // Route::get('/email/verify', function () {
 //     return view('auth.verify-email');
 // })->middleware('auth')->name('verification.notice');
