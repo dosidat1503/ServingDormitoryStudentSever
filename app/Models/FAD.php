@@ -22,6 +22,21 @@ class FAD extends Model
         'DESCRIPTION',
         'IS_DELETED'
     ];
+
+
+
+    // By default laravel will expect created_at & updated_at column in your table
+    public $stamps = false;
+    protected $fill = [
+        'FAD_NAME',
+        'FAD_TYPE',
+        'FAD_PRICE',
+        'IMAGE_ID',
+        'SHOP_ID',
+        'ID_PARENTFADOFTOPPING',
+        'DESCRIPTION',
+        'IS_DELETED'
+    ];
     public function image()
     {
         return $this->hasOne(Image::class, 'IMAGE_ID', 'IMAGE_ID');
