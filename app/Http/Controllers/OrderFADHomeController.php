@@ -74,7 +74,7 @@ class OrderFADHomeController extends Controller
         $FADShop_ID = $request->FADShop_ID;
         $atHome = $request->atHome;
 
-        $FADInfo_eloquent = FAD::select('FAD.FAD_ID', 'FAD.FAD_NAME', 'FAD.FAD_PRICE', 'FAD.CATEGORY')
+        $FADInfo_eloquent = FAD::select('FAD.FAD_ID', 'FAD.FAD_NAME', 'FAD.FAD_PRICE', 'FAD.CATEGORY', 'FAD.DESCRIPTION')
             ->leftJoin('IMAGE', 'FAD.IMAGE_ID', '=', 'IMAGE.IMAGE_ID')
             ->leftJoin('SHOP', 'FAD.SHOP_ID', '=', 'SHOP.SHOP_ID')
             ->leftJoin('IMAGE AS SHOP_IMAGE', 'SHOP.AVT_IMAGE_ID', '=', 'SHOP_IMAGE.IMAGE_ID')
@@ -92,7 +92,7 @@ class OrderFADHomeController extends Controller
             $FADInfo_eloquent = $FADInfo_eloquent
             ->leftJoin('order_detail', 'FAD.FAD_ID', '=', 'ORDER_DETAIL.FAD_ID')
             ->addSelect(DB::raw('COUNT(order_detail.FAD_ID) AS ORDER_COUNT'))
-            ->groupBy('FAD.FAD_ID', 'FAD.FAD_NAME', 'FAD.FAD_PRICE', 'FAD.CATEGORY', 'IMAGE.URL', 'SHOP.SHOP_NAME', 'SHOP_IMAGE.URL')
+            ->groupBy('FAD.FAD_ID', 'FAD.FAD_NAME', 'FAD.FAD_PRICE', 'FAD.CATEGORY', 'IMAGE.URL', 'SHOP.SHOP_NAME', 'SHOP_IMAGE.URL', 'FAD.DESCRIPTION')
             ->orderBy('ORDER_COUNT', 'desc')
             ->limit(10); 
         }

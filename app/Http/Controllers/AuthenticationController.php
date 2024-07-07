@@ -17,7 +17,7 @@ class AuthenticationController extends Controller
 {
     public function signup(Request $request) {
         $Validator = Validator::make($request->all(), [ 
-            'email' => 'required|email:191|unique:user', 
+            'email' => 'required|email:191|unique:user,email', 
         ]);
 
         if($Validator->fails()){

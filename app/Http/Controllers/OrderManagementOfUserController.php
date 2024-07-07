@@ -100,6 +100,7 @@ class OrderManagementOfUserController extends Controller
             'VOUCHER_CODE' => $orderInfo->VOUCHER_CODE,
             'DISCOUNT_VALUE' => $orderInfo->DISCOUNT_VALUE,
             'TOTAL_PAYMENT' =>  $orderInfo->TOTAL_PAYMENT,
+            'PAYMENT_METHOD' =>  $orderInfo->PAYMENT_METHOD,
             'imagesURL' => $imagesURL,
             // 'data' => $data,
         ]);

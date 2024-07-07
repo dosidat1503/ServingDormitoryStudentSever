@@ -64,40 +64,69 @@ class HomeController extends Controller
         $startIndex = $request->input('startIndex');
         $isLikeAndSave = $request->input('isLikeAndSave');
         $isManagePost = $request->input('isManagePost');
+        $isHome = $request->input('isHome');
         $userID = $request->input('userID');
 
         $infoPost = []; 
 
         $infoPostQuery = Post::query();  
         
+        if($isHome){
+            $likedPosts = DB::table('post_interaction')
+                ->where('USER_ID', $userID)
+                ->where('IS_LIKE', 1)
+                ->pluck('POST_ID');
 
-        if (!empty($textQueryPost)) {
-            $infoPostQuery->where('CONTENT', 'LIKE', '%' . $textQueryPost . '%');
-        }
-        
-        if (!empty($topics)) {
-            $infoPostQuery->whereIn('TOPIC', $topics);
-        }
-        
-        if (!is_null($startDate) && $endDate == "") {
-            $infoPostQuery->where('TIME', '=', $startDate);
-        }
-        else{
-            // Thêm điều kiện cho ngày tháng nếu tồn tại
-            if (!is_null($startDate)) {
-                $infoPostQuery->where('TIME', '>=', $startDate);
-            }
-    
-            if (!is_null($endDate)) {
-                $infoPostQuery->where('TIME', '<=', $endDate);
-            }
-        }
+            // Lấy danh sách của những người cũng thích các bài viết đó
+            $usersLikedSamePosts = DB::table('post_interaction')
+                ->whereIn('POST_ID', $likedPosts)
+                ->where('IS_LIKE', 1)
+                ->where('USER_ID', '!=', $userID)
+                ->pluck('USER_ID');
 
-        //nếu sortBy = 1 thì sắp xếp theo thời gian, 2 là sắp xếp theo số lượng like
-        if ($sortBy == 2) {
-            $infoPostQuery->orderBy('LIKE_QUANTITY', 'desc');
-        } else {
-            $infoPostQuery->orderBy('TIME', 'desc');
+            // Lấy những bài viết mà những người khác thích
+            $suggestedPosts = DB::table('post_interaction')
+                ->whereIn('USER_ID', $usersLikedSamePosts)
+                ->where('IS_LIKE', 1)
+                ->whereNotIn('POST_ID', $likedPosts)
+                ->pluck('POST_ID')
+                ->unique();
+
+            $infoPostQuery = $infoPostQuery->whereIn('post.POST_ID', $suggestedPosts);
+        }
+        else{ 
+            if (!empty($textQueryPost)) {
+                $infoPostQuery->where('CONTENT', 'LIKE', '%' . $textQueryPost . '%');
+            }
+            
+            if (!empty($topics)) {
+                $infoPostQuery->whereIn('TOPIC', $topics);
+            }
+            
+            if (!is_null($startDate) && $endDate == "") {
+                $infoPostQuery->where('TIME', '=', $startDate);
+            }
+            else{
+                // Thêm điều kiện cho ngày tháng nếu tồn tại
+                if (!is_null($startDate)) {
+                    $infoPostQuery->where('TIME', '>=', $startDate);
+                }
+        
+                if (!is_null($endDate)) {
+                    $infoPostQuery->where('TIME', '<=', $endDate);
+                }
+            }
+
+            //nếu sortBy = 1 thì sắp xếp theo thời gian, 2 là sắp xếp theo số lượng like
+            if ($sortBy == 2) {
+                $infoPostQuery->orderBy('LIKE_QUANTITY', 'desc');
+            } else {
+                $infoPostQuery->orderBy('TIME', 'desc');
+            } 
+
+            if($isManagePost == true){
+                $infoPostQuery = $infoPostQuery->where('post.USER_ID', $userID);
+            } 
         }
 
         //cái này dùng để lấy ra những bài viết mà user đã like hoặc save ( khi ở trong trang quản lý bài viết đã thích và lưu thì mới truyền giá trị cho $isLikeAndSave )
@@ -113,7 +142,7 @@ class HomeController extends Controller
                     ->where('post_interaction.USER_ID', $userID)
                     ->where(function($query) {
                         $query->where('post_interaction.IS_LIKE', 1)
-                              ->orWhere('post_interaction.IS_SAVE', 1);
+                            ->orWhere('post_interaction.IS_SAVE', 1);
                     })
                     ->select('post.*', 'post_interaction.IS_LIKE', 'post_interaction.IS_SAVE');
         }
@@ -130,14 +159,13 @@ class HomeController extends Controller
                                     ->orWhereNull('post_interaction.POST_ID'); // Điều kiện này đảm bảo rằng cả những bài viết không có trong bảng post_interaction cũng được lấy ra
                             });
         }
-
-        if($isManagePost == true){
-            $infoPostQuery = $infoPostQuery->where('post.USER_ID', $userID);
-        }
-
         // Thực hiện truy vấn với sắp xếp và giới hạn số lượng kết quả
-        $infoPost = $infoPostQuery->skip($startIndex)->take($itemQuantityEveryLoad)->get(); 
- 
+        $infoPost = $infoPostQuery
+                    ->skip($startIndex)
+                    ->take($itemQuantityEveryLoad)
+                    // ->where("IS_DELETED", 0)
+                    ->get(); 
+
         $userID = $infoPost->pluck('USER_ID'); 
         
         $usersInfo = DB::table('user')
@@ -155,11 +183,15 @@ class HomeController extends Controller
                 'URL' => $postImage->image->URL,
             ];
         });
+
         return response()->json([
             "statusCode" => 200,
             "infoPost" => $infoPost,
             "usersInfo" => $usersInfo, 
             'infoPostImage' => $infoPostImage, 
+            // 'suggestedPosts' => $suggestedPosts || [],
+            // 'likedPosts' => $likedPosts,
+            // 'usersLikedSamePosts' => $usersLikedSamePosts
         ]);
     }
 
@@ -915,7 +947,33 @@ class HomeController extends Controller
             //     'IS_SAVE' => 1, 
             // ]);
 
- 
+            DB::table('POST_INTERACTION')->insert([
+                'POST_ID' => 4,
+                'USER_ID' => 2,
+                'IS_LIKE' => 1, 
+            ]); 
+
+            DB::table('POST_INTERACTION')->insert([
+                'POST_ID' => 4,
+                'USER_ID' => 3,
+                'IS_LIKE' => 1, 
+            ]);
+
+            for($i = 1; $i <= 6; $i++) {
+                DB::table('POST_INTERACTION')->insert([
+                    'POST_ID' => $i,
+                    'USER_ID' => 2,
+                    'IS_LIKE' => 1, 
+                ]);
+            } 
+
+            DB::table('rating_fad')->insert([
+                'ORDER_DETAIL_ID' => 1,
+                'USER_ID' => 3,
+                'DATE' => 1, 
+                'CONTENT' => 1, 
+                'STAR_QUANTITY' => 1, 
+            ]);
         } 
     }
 }
