@@ -16,11 +16,12 @@ return new class extends Migration
             $table->bigIncrements("FAD_ID");
             $table->string('FAD_NAME');
             $table->integer('FAD_PRICE');
-            $table->unsignedBigInteger('IMAGE_ID')->nullable();
+            $table->unsignedBigInteger('IMAGE_ID');
+            $table->integer('QUANTITY')->default(0);
             $table->unsignedBigInteger('SHOP_ID');
             $table->integer('ID_PARENTFADOFTOPPING')->nullable();
             $table->integer('ID_PARENTFADOFSIZE')->nullable();
-            $table->longText('DESCRIPTION')->nullable();  
+            $table->longText('DESCRIPTION')->nullable();
             $table->boolean('IS_DELETED');
             $table->integer('CATEGORY')->nullable();
             $table->integer('TAG')->nullable();
@@ -37,5 +38,5 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('FAD');
-    } 
+    }
 };

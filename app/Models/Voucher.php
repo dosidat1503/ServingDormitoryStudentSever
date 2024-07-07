@@ -9,4 +9,12 @@ class Voucher extends Model
 {
     use HasFactory;
     protected $table = 'Voucher';
+    protected $primaryKey = 'VOUCHER_ID';
+    protected $fillable = ['VOUCHER_CODE', 'SHOP_ID', 'DISCOUNT_VALUE', 'MIN_ORDER_TOTAL', 'START_DATE', 'EXPIRATION_DATE', 'MAX_QUANTITY', 'IS_DELETED'];
+    public $timestamps = false;
+
+    public function shop()
+    {
+        return $this->belongsTo(Shop::class, 'SHOP_ID', 'SHOP_ID');
+    }
 }
