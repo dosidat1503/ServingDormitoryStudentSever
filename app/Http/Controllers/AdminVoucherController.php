@@ -206,6 +206,7 @@ class AdminVoucherController extends Controller
                     'VOUCHER_CODE' => $request->voucher_code,
                     'DISCOUNT_VALUE' => $request->discount_value,
                     'MIN_ORDER_TOTAL' => $request->min_order_total,
+                    'MAX_DISCOUNT_VALUE' => $request->max_discount_value,
                     'START_DATE' => $request->start_date,
                     'EXPIRATION_DATE' => $request->end_date,
                     'MAX_QUANTITY' => $request->max_quantity,
@@ -216,6 +217,7 @@ class AdminVoucherController extends Controller
                     'VOUCHER_CODE' => $request->voucher_code,
                     'DISCOUNT_VALUE' => $request->discount_value,
                     'MIN_ORDER_TOTAL' => $request->min_order_total,
+                    'MAX_DISCOUNT_VALUE' => $request->max_discount_value,
                     'START_DATE' => $request->start_date,
                     'EXPIRATION_DATE' => $request->end_date,
                     'MAX_QUANTITY' => $request->max_quantity
